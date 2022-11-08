@@ -15,7 +15,7 @@ $ESBUILD src/index.ts --outfile=dist/index.js &
 
 # Build the individual fields
 for module in $(ls src/fields/*/module.ts); do
-  $ESBUILD $module --outfile=dist/$(dirname $module)/module.js &
+  $ESBUILD "$module" --outfile=dist/$(dirname "$module")/module.js &
 done
 
 wait $(jobs -p)
