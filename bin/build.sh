@@ -11,7 +11,7 @@ set -e
 ESBUILD="npx esbuild --bundle --target=firefox100 --format=esm --loader:.html=text"
 
 # Build the main bundle
-$ESBUILD src/index.ts --outfile=dist/index.js &
+$ESBUILD src/index.ts --outfile=dist/fields.js &
 
 # Build the individual fields
 for module in $(ls src/fields/*/module.ts); do

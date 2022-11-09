@@ -1,0 +1,25 @@
+{
+  "name": "komoju-fields-test-app",
+  "version": "1.0.0",
+  "description": "Test and demo application for KOMOJU Fields",
+  "main": "server.mjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/degica/komoju-fields.git"
+  },
+  "author": "Nigel Baillie <nigelbaillie@degica.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/degica/komoju-fields/issues"
+  },
+  "homepage": "https://github.com/degica/komoju-fields#readme",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.2",
+    "node-fetch": "^3.2.10"
+  }
+}

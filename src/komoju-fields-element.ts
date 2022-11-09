@@ -5,19 +5,29 @@ export default class KomojuFieldsElement extends HTMLElement {
     return [
       'session-id',
       'publishable-key',
-      'komoju',
+      'komoju-api',
+      'komoju-cdn',
     ];
   }
 
   session: KomojuSession | null = null
 
-  get komoju() {
-    const value = this.getAttribute('komoju');
+  get komojuApi() {
+    const value = this.getAttribute('komoju-api');
     if (!value || value === '') return 'https://komoju.com';
     else return value;
   }
-  set komoju(value) {
-    this.setAttribute('komoju', value ?? '');
+  set komojuApi(value) {
+    this.setAttribute('komoju-api', value ?? '');
+  }
+
+  get komojuCdn() {
+    const value = this.getAttribute('komoju-cdn');
+    if (!value || value === '') return 'https://multipay.komoju.com';
+    else return value;
+  }
+  set komojuCdn(value) {
+    this.setAttribute('komoju-cdn', value ?? '');
   }
 
   get sessionId() {
@@ -66,7 +76,7 @@ export default class KomojuFieldsElement extends HTMLElement {
   }
 
   private komojuFetch(method: 'GET' | 'POST', path: string): Promise<Response> {
-    return fetch(`${this.komoju}${path}`, {
+    return fetch(`${this.komojuApi}${path}`, {
       method,
       headers: {
         authorization: `Basic ${btoa(`${this.publishableKey}:`)}`
