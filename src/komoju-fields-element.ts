@@ -89,6 +89,7 @@ export default class KomojuFieldsElement extends HTMLElement {
       }, 0);
     }
     else if (name === 'payment-type') {
+      if (this.shadowRoot) this.shadowRoot.innerHTML = spinner;
       this.render();
     }
   }
