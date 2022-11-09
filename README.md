@@ -2,7 +2,7 @@
 
 KOMOJU Hosted Fields (or KOMOJU Fields) is a JavaScript library that allows you to collect sensitive payment information in a PCI-compliant way. It is a drop-in replacement for the standard HTML form fields, and is designed to be easy to integrate into your website.
 
-KOMOJU Fields is built using HTML Custom Elements, making it easy to use regardless of whether you use React, Vue, or plain HTML.
+KOMOJU Fields is built using [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) and no dependencies, making it lean and easy to use regardless of whether you use React, Vue, or plain HTML.
 
 ## Usage
 
@@ -45,3 +45,5 @@ Here's a rundown of the "stack":
 * `tsc` more as a linter than a compiler
 * `bin/*.sh` simple scripts for building and linting each bundle
 * `express` for serving the demo page and making real KOMOJU test sessions
+
+The build script produces multiple separate bundles: a **main bundle** and **one bundle for each supported payment method**. This allows us to only send the code for the payment methods that are actually used in a given session. The **main bundle** uses [**dynamic import**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) to load the payment method bundles on demand.
