@@ -41,7 +41,7 @@ app.get('/fields.js', async (req, res) => {
 app.get('/fields/:payment_type/module.js', async (req, res) => {
   const paymentType = req.params['payment_type'].replace(/[^a-z0-9_]/g, '')
   res.set('Content-Type', 'application/javascript')
-  res.send(await fs.readFile(`../dist/${paymentType}/module.js`, 'utf8'))
+  res.send(await fs.readFile(`../dist/fields/${paymentType}/module.js`, 'utf8'))
 });
 
 /*
@@ -53,7 +53,9 @@ app.get('/fields/:payment_type/module.js', async (req, res) => {
  ****************************************************************
  */
 app.get('/', async (_req, res) => {
-  const komojuSessionRequest = await fetch(`${KOMOJU_API_URL}/api/v1/sessions`, {
+  res.set('content-type', 'text/html')
+
+  const komojuSessionResponse = await fetch(`${KOMOJU_API_URL}/api/v1/sessions`, {
     method: 'POST',
     headers: komojuHeaders(),
     body: JSON.stringify({
@@ -65,9 +67,12 @@ app.get('/', async (_req, res) => {
       return_url: 'http://localhost:3000/paymentcomplete',
     })
   })
-  const session = await komojuSessionRequest.json()
+  const session = await komojuSessionResponse.json()
+  if (session.error) {
+    console.error(session);
+    res.send('Error creating KOMOJU session.<br><pre>'+JSON.stringify(session, null, 2)+'</pre>');
+  }
 
-  res.set('content-type', 'text/html')
   res.render('index', {
     session,
     publishableKey: KOMOJU_PUBLISHABLE_KEY,

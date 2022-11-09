@@ -26,6 +26,7 @@ interface KomojuSession {
   session_url: string,
   return_url: string,
   default_locale: string,
+  payment_methods: [KomojuPaymentMethod],
   created_at: string,
   cancelled_at: string,
   completed_at: string,

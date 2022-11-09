@@ -4,9 +4,7 @@ export default class KomojuFieldsElement extends HTMLElement {
   static get observedAttributes() {
     return [
       'session-id',
-      'publishable-key',
-      'komoju-api',
-      'komoju-cdn',
+      'payment-type',
     ];
   }
 
@@ -44,14 +42,17 @@ export default class KomojuFieldsElement extends HTMLElement {
     this.setAttribute('publishable-key', value ?? '');
   }
 
-  /*
-    TODO:
-    1. get session from ID
-    2. based on payment types, dynamic-import the appropriate fields
-    3. render the fields
+  get paymentType() {
+    return this.getAttribute('payment-type');
+  }
+  set paymentType(value) {
+    this.setAttribute('payment-type', value ?? '');
+  }
 
-    Also we need to figure out how to configure both komoju.com and multipay.komoju.com endpoints.
-  */
+  constructor() {
+    super();
+    this.attachShadow({mode: 'open'});
+  }
 
   attributeChangedCallback(name: string, _oldValue: any, newValue: any) {
     if (name === 'session-id' && typeof newValue === 'string' && newValue != '') {
@@ -70,9 +71,24 @@ export default class KomojuFieldsElement extends HTMLElement {
         }
 
         this.session = await response.json();
-        // TODO: maybe call a render function here?
+        if (!this.session) throw new Error('KOMOJU returned a null session');
+        if (!this.paymentType) this.paymentType = this.session.payment_methods[0].type;
+
+        this.render();
       }, 0);
     }
+    else if (name === 'payment-type') {
+      this.render();
+    }
+  }
+
+  async render() {
+    if (!this.session) throw new Error('KOMOJU Session not loaded');
+    const paymentMethod = this.session.payment_methods.find(method => method.type === this.paymentType);
+    if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
+
+    const module = await import(`${this.komojuCdn}/fields/${this.paymentType}/module.js`);
+    module.default(this.shadowRoot, paymentMethod);
   }
 
   private komojuFetch(method: 'GET' | 'POST', path: string): Promise<Response> {
