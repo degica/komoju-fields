@@ -1,0 +1,55 @@
+<style>
+.komoju-spinner {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  padding: 15px;
+  list-style: none;
+}
+
+.komoju-spinner li {
+  width: 0.2em;
+  height: 0.2em;
+  border-radius: 50%;
+}
+
+.komoju-spinner li:nth-child(1) {
+  transform-origin: 50% 125%;
+  animation: komoju-spin 1.4s linear infinite;
+
+  width: 5px;
+  height: 5px;
+  background: lightgrey;
+  margin-left: -0.1em; /* Width/2 */
+}
+.komoju-spinner li:nth-child(2) {
+  transform-origin: -25% 50%;
+  animation: komoju-spin 1s linear infinite;
+
+  width: 7.5px;
+  height: 7.5px;
+  background: lightgrey;
+  margin-top: -0.1em; /* Height/2 */
+}
+.komoju-spinner li:nth-child(3) {
+  transform-origin: 50% -25%;
+  animation: komoju-spin 1.2s linear infinite;
+
+  width: 10px;
+  height: 10px;
+  background: lightgrey;
+  margin-left: -0.1em; /* Width/2 */
+}
+
+@keyframes komoju-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
+
+<ul class='komoju-spinner'>
+  <li></li>
+  <li></li>
+  <li></li>
+</ul>

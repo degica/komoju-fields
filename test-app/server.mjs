@@ -62,7 +62,7 @@ app.get('/', async (_req, res) => {
       amount: 6000,
       currency: 'JPY',
       payment_data: {
-        external_order_num: `order-${Math.floor(Math.random() * 100)}`,
+        external_order_num: `order-${Math.floor(Math.random() * 1000000000)}`,
       },
       return_url: 'http://localhost:3000/paymentcomplete',
     })
@@ -71,6 +71,7 @@ app.get('/', async (_req, res) => {
   if (session.error) {
     console.error(session);
     res.send('Error creating KOMOJU session.<br><pre>'+JSON.stringify(session, null, 2)+'</pre>');
+    return;
   }
 
   res.render('index', {

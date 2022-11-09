@@ -1,3 +1,3 @@
 #!/bin/sh
 
-ls src/* | entr -c -r -s bin/build.sh
+find src -type f | entr -c -r -s bin/build.sh

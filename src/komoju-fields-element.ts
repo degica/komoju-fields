@@ -1,4 +1,5 @@
 import './types.d'
+import spinner from './spinner.html'
 
 export default class KomojuFieldsElement extends HTMLElement {
   static get observedAttributes() {
@@ -51,7 +52,8 @@ export default class KomojuFieldsElement extends HTMLElement {
 
   constructor() {
     super();
-    this.attachShadow({mode: 'open'});
+    const root = this.attachShadow({mode: 'open'});
+    root.innerHTML = spinner;
   }
 
   attributeChangedCallback(name: string, _oldValue: any, newValue: any) {
