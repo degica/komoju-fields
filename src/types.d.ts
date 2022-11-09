@@ -33,6 +33,15 @@ interface KomojuSession {
   status: 'pending' | 'completed'  | 'cancelled',
 }
 
+interface KomojuPayResult {
+  status: 'pending' | 'completed' | 'error',
+  error?: string | object,
+  redirect_url?: string,
+}
+
+type KomojuRenderFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => void;
+type KomojuPaymentDetailsFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => object;
+
 declare module '*.html' {
   const value: string;
   export default value;

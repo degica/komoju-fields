@@ -10,6 +10,15 @@ export default class KomojuFieldsElement extends HTMLElement {
   }
 
   session: KomojuSession | null = null
+  module: {
+    render: KomojuRenderFunction,
+    paymentDetails: KomojuPaymentDetailsFunction
+  } | null = null
+
+  formSubmitHandler?: {
+    form: HTMLFormElement,
+    handler: (event: Event) => void
+  }
 
   get komojuApi() {
     const value = this.getAttribute('komoju-api');
@@ -84,21 +93,85 @@ export default class KomojuFieldsElement extends HTMLElement {
     }
   }
 
-  async render() {
-    if (!this.session) throw new Error('KOMOJU Session not loaded');
+  // When connected, we want to find the form that this element is in and attach a submit handler to it.
+  connectedCallback() {
+    // Crudely search for parent element until it is a form tag.
+    let parent = this.parentElement;
+    while (parent && parent.tagName !== 'FORM') {
+      parent = parent.parentElement;
+    }
+    // This is optional - implementers may call submit() manually.
+    if (!parent) return;
+
+    // Call this.submit on form submit.
+    const form = parent as HTMLFormElement;
+    const handler = (event: Event) => {
+      event.preventDefault();
+      this.submit();
+    };
+    form.addEventListener('submit', handler);
+    this.formSubmitHandler = { form, handler };
+  }
+
+  // When disconnected, we want to remove the submit handler from the form (if added).
+  disconnectedCallback() {
+    if (!this.formSubmitHandler) return;
+    this.formSubmitHandler.form.removeEventListener('submit', this.formSubmitHandler.handler);
+  }
+
+  // Submits payment details securely to KOMOJU before redirecting.
+  // The redirect target may be
+  // 1. A URL for performing 3DS authentication
+  // 2. An external payment provider URL (i.e. for payment apps)
+  // 3. The session's return_url in the case where payment is completed instantly
+  async submit() {
+    if (!this.module || !this.shadowRoot || !this.session) {
+      throw new Error('Attempted to submit before selecting KOMOJU Payment method');
+    }
     const paymentMethod = this.session.payment_methods.find(method => method.type === this.paymentType);
     if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
 
-    const module = await import(`${this.komojuCdn}/fields/${this.paymentType}/module.js`);
-    module.default(this.shadowRoot, paymentMethod);
+    const paymentDetails = this.module.paymentDetails(this.shadowRoot, paymentMethod);
+    const payResponse = await this.komojuFetch('POST', `/api/v1/sessions/${this.session.id}/pay`, {
+      // TODO: supply fraud_details too
+      payment_details: paymentDetails
+    });
+    const payResult = await payResponse.json() as KomojuPayResult;
+
+    if (payResult.error) {
+      // TODO: handle this better
+      console.error(payResult);
+      return;
+    }
+
+    this.shadowRoot.innerHTML = spinner;
+    window.location.href = payResult.redirect_url!;
   }
 
-  private komojuFetch(method: 'GET' | 'POST', path: string): Promise<Response> {
+  // Renders fields for the selected payment method.
+  // Usually implementers would not need to call this manually.
+  async render() {
+    if (!this.session) throw new Error('KOMOJU Session not loaded');
+
+    const paymentMethod = this.session.payment_methods.find(method => method.type === this.paymentType);
+    if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
+
+    this.module = await import(`${this.komojuCdn}/fields/${this.paymentType}/module.js`);
+    if (!this.module) throw new Error(`KOMOJU Payment module not found: ${this.paymentType}`);
+
+    if (!this.shadowRoot) throw new Error('KOMOJU Fields element has no shadow root (internal bug)');
+    this.module.render(this.shadowRoot, paymentMethod);
+  }
+
+  private komojuFetch(method: 'GET' | 'POST', path: string, body?: object): Promise<Response> {
     return fetch(`${this.komojuApi}${path}`, {
       method,
       headers: {
-        authorization: `Basic ${btoa(`${this.publishableKey}:`)}`
-      }
+        accept: 'application/json',
+        'content-type': 'application/json',
+        authorization: `Basic ${btoa(`${this.publishableKey}:`)}`,
+      },
+      body: body ? JSON.stringify(body) : undefined
     });
   }
 }
