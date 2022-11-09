@@ -4,8 +4,9 @@
   "description": "An easy-to-use, fully customizable payment form for KOMOJU by Degica",
   "main": "index.js",
   "scripts": {
-    "lint": "npx tsc --noEmit",
-    "build": "npx esbuild src/index.ts --bundle --target=firefox100 --format=esm --loader:.html=text"
+    "lint": "bin/lint.sh",
+    "build": "bin/build.sh",
+    "watch": "bin/watch.sh"
   },
   "repository": {
     "type": "git",
