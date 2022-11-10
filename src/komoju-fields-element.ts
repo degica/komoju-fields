@@ -4,6 +4,7 @@ import spinner from './spinner.html'
 export default class KomojuFieldsElement extends HTMLElement {
   static get observedAttributes() {
     return [
+      'session',
       'session-id',
       'payment-type',
     ];
@@ -20,6 +21,8 @@ export default class KomojuFieldsElement extends HTMLElement {
     handler: (event: Event) => void
   }
 
+  // Attribute: komoju-api
+  // Usually this'll just be https://komoju.com, but sometimes we use other URLs.
   get komojuApi() {
     const value = this.getAttribute('komoju-api');
     if (!value || value === '') return 'https://komoju.com';
@@ -29,6 +32,8 @@ export default class KomojuFieldsElement extends HTMLElement {
     this.setAttribute('komoju-api', value ?? '');
   }
 
+  // Attribute: komoju-cdn
+  // Where to fetch payment method modules.
   get komojuCdn() {
     const value = this.getAttribute('komoju-cdn');
     if (!value || value === '') return 'https://multipay.komoju.com';
@@ -38,6 +43,8 @@ export default class KomojuFieldsElement extends HTMLElement {
     this.setAttribute('komoju-cdn', value ?? '');
   }
 
+  // Attribute: session-id
+  // KOMOJU Session ID. Create your session on the server then pass it in here.
   get sessionId() {
     return this.getAttribute('session-id');
   }
@@ -45,6 +52,8 @@ export default class KomojuFieldsElement extends HTMLElement {
     this.setAttribute('session-id', value ?? '');
   }
 
+  // Attribute: publishable-key
+  // KOMOJU publishable key. Get this from your merchant dashboard.
   get publishableKey() {
     return this.getAttribute('publishable-key');
   }
@@ -52,6 +61,9 @@ export default class KomojuFieldsElement extends HTMLElement {
     this.setAttribute('publishable-key', value ?? '');
   }
 
+  // Attribute: payment-type
+  // Which payment type to show. If your session only has 1 payment type, this is unnecessary.
+  // Alternatively, if a <komoju-picker> element is present, this will be set automatically.
   get paymentType() {
     return this.getAttribute('payment-type');
   }
@@ -65,8 +77,13 @@ export default class KomojuFieldsElement extends HTMLElement {
     root.innerHTML = spinner;
   }
 
-  attributeChangedCallback(name: string, _oldValue: any, newValue: any) {
-    if (name === 'session-id' && typeof newValue === 'string' && newValue != '') {
+  // Reactive attribute handling. When session or payment type is changed, we want to re-render.
+  attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
+    if (name === 'session') {
+      this.session = JSON.parse(newValue);
+      if (!this.paymentType) this.paymentType = this.session!.payment_methods[0].type;
+      this.render();
+    } else if (name === 'session-id' && newValue != '') {
       // Just in case publishable-key is set before session-id, we fetch the session on next tick.
       setTimeout(async () => {
         const response = await this.komojuFetch('GET', `/api/v1/sessions/${newValue}`);
@@ -123,7 +140,7 @@ export default class KomojuFieldsElement extends HTMLElement {
   // Submits payment details securely to KOMOJU before redirecting.
   // The redirect target may be
   // 1. A URL for performing 3DS authentication
-  // 2. An external payment provider URL (i.e. for payment apps)
+  // 2. An external payment provider URL (i.e. to log into a payment app or show a QR code)
   // 3. The session's return_url in the case where payment is completed instantly
   async submit() {
     if (!this.module || !this.shadowRoot || !this.session) {
@@ -164,6 +181,7 @@ export default class KomojuFieldsElement extends HTMLElement {
     this.module.render(this.shadowRoot, paymentMethod);
   }
 
+  // fetch wrapper with KOMOJU authentication already handled.
   private komojuFetch(method: 'GET' | 'POST', path: string, body?: object): Promise<Response> {
     return fetch(`${this.komojuApi}${path}`, {
       method,

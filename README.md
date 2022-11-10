@@ -47,3 +47,12 @@ Here's a rundown of the "stack":
 * `express` for serving the demo page and making real KOMOJU test sessions
 
 The build script produces multiple separate bundles: a **main bundle** and **one bundle for each supported payment method**. This allows us to only send the code for the payment methods that are actually used in a given session. The **main bundle** uses [**dynamic import**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) to load the payment method bundles on demand.
+
+To run the test server:
+```sh
+cd test-app
+npm run start
+```
+
+http://localhost:3000/ <- demo page that fetches a new session from KOMOJU
+http://localhost:3000/easy <- demo page that uses a pre-generated session (fast to load, easy to rapidly iterate)

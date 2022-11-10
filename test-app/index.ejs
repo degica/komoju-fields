@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>KOMOJU Fields example</title>
+  <link rel="icon" type="image/x-icon" href="https://en.komoju.com/wp-content/uploads/2021/04/5fac5839c59681caee17bdf2_Favicon-Black.png">
 
   <!-- Include the fields.js script. -->
   <script type="module" src="/fields.js"></script>
@@ -14,6 +15,7 @@
 
     <!-- Payment input fields. Contents are dynamic based on the Session's payment types. -->
     <komoju-fields
+      session="<%= sessionString %>"
       session-id="<%= session.id %>"
       publishable-key="<%= publishableKey %>"
       komoju-cdn="<%= cdn %>"

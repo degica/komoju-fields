@@ -10,13 +10,13 @@
   </label>
 
   <label class="field field-month">
-    <span>Month</span>
-    <input id="cc-month" autocomplete="cc-exp-month">
-  </label>
-
-  <label class="field field-year">
-    <span>Year</span>
-    <input id="cc-year" autocomplete="cc-exp-year">
+    <span>Expiration</span>
+    <input
+      id="cc-exp"
+      placeholder="MM / YY"
+      maxlength="7"
+      autocomplete="cc-exp"
+    >
   </label>
 
   <label class="field field-year">
@@ -24,3 +24,23 @@
     <input id="cc-cvc" autocomplete="cc-csc">
   </label>
 </div>
+
+<style>
+  .credit_card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #cc-number {
+    padding-right: 2.5rem;
+    background-image: url(https://komoju.com/payment_methods/credit_card.svg);
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-size: contain;
+  }
+</style>
