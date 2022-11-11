@@ -1,5 +1,13 @@
 type CardType = 'visa' | 'mastercard' | 'amex' | 'jcb' | 'jcb15' | 'diner' | 'discover' | 'unionpay' | 'unknown';
 
+export function cardTypeToKomojuSubtype(type: CardType): string {
+  if (type === 'amex') return 'american_express';
+  if (type === 'diner') return 'diners_club';
+  if (type === 'jcb15') return 'jcb';
+  if (type === 'mastercard') return 'master';
+  return type;
+}
+
 export function insertSpaceEvery4Characters(str: string) {
   return str.replace(/(.{4})/g, '$1 ').trim();
 }

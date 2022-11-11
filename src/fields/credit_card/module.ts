@@ -1,7 +1,7 @@
 import '../../types.d'
 import text from './template.html'
 import { convertNumbersToHalfWidth } from '../../shared/char-width-utils';
-import { cardType, formatCardNumber, cardNumberMaxLength } from './card-number-utils';
+import { cardType, formatCardNumber, cardNumberMaxLength, cardTypeToKomojuSubtype } from './card-number-utils';
 
 export const render: KomojuRenderFunction = (root, paymentMethod) => {
   root.innerHTML = text;
@@ -33,9 +33,11 @@ function initializeInputs(document: DocumentFragment) {
     input.maxLength = cardNumberMaxLength(type);
     input.value = formatCardNumber(value, type);
     input.dataset.brand = type;
+
+    const brand = cardTypeToKomojuSubtype(type);
     input.style.backgroundImage = type === 'unknown' ?
       'url(https://komoju.com/payment_methods/credit_card.svg)' :
-      `url(https://komoju.com/payment_methods/credit_card.svg?brands=${type})`;
+      `url(https://komoju.com/payment_methods/credit_card.svg?brands=${brand})`;
   });
 
   // Expiration date
