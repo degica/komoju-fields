@@ -5,11 +5,11 @@ import { cardType, formatCardNumber, cardNumberMaxLength, cardTypeToKomojuSubtyp
 
 export const render: KomojuRenderFunction = (root, paymentMethod) => {
   root.innerHTML = text;
-  initializeInputs(root);
+  initializeInputs(root, root.host as KomojuFieldsConfig);
 }
 
-function initializeInputs(document: DocumentFragment) {
-  // First, IME. We don't want to do auto-formatting while IME is active.
+function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig) {
+  // So, IME. We don't want to do auto-formatting while IME is active.
   document.querySelectorAll('input').forEach((input) => {
     input.addEventListener('compositionstart', () => {
       input.dataset.ime = 'active';
@@ -21,7 +21,10 @@ function initializeInputs(document: DocumentFragment) {
 
   // Credit card number
   // Format: 1234 5678 9012 3456 (sometimes more or less digits)
-  document.getElementById('cc-number')?.addEventListener('input', (event) => {
+  const number = document.getElementById('cc-number')! as HTMLInputElement;
+  const defaultCardImage = `url(${config.komojuCdn}/static/credit_card_number.svg)`
+  number.style.backgroundImage = defaultCardImage;
+  number.addEventListener('input', (event) => {
     const input = event.target as HTMLInputElement;
     if (input.dataset.ime === 'active') return;
     let value = input.value;
@@ -35,8 +38,7 @@ function initializeInputs(document: DocumentFragment) {
     input.dataset.brand = type;
 
     const brand = cardTypeToKomojuSubtype(type);
-    input.style.backgroundImage = type === 'unknown' ?
-      'url(https://komoju.com/payment_methods/credit_card.svg)' :
+    input.style.backgroundImage = type === 'unknown' ?  defaultCardImage :
       `url(https://komoju.com/payment_methods/credit_card.svg?brands=${brand})`;
   });
 
@@ -74,6 +76,11 @@ function initializeInputs(document: DocumentFragment) {
     input.value = value;
     lastExpValue = value;
   });
+
+  // CVC
+  // Here we just want to set the helper image.
+  const cvc = document.getElementById('cc-cvc')! as HTMLInputElement;
+  cvc.style.backgroundImage = `url(${config.komojuCdn}/static/credit_card_cvc.svg)`;
 }
 
 export const paymentDetails: KomojuPaymentDetailsFunction = (root, _paymentMethod) => {

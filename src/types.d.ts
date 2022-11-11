@@ -42,6 +42,13 @@ interface KomojuPayResult {
 type KomojuRenderFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => void;
 type KomojuPaymentDetailsFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => object;
 
+// Individual payment methods will access certain attributes of the main <komoju-fields> element.
+// This interface defines those attributes.
+interface KomojuFieldsConfig extends HTMLElement {
+  komojuCdn: string,
+  komojuApi: string,
+}
+
 declare module '*.html' {
   const value: string;
   export default value;

@@ -18,4 +18,10 @@ for module in $(ls src/fields/*/module.ts); do
   $ESBUILD "$module" --outfile=$(dirname "$module" | sed 's/src/dist/')/module.js &
 done
 
+# Copy over static assets
+mkdir -p dist/static
+for asset in $(ls src/static/*); do
+  cp "$asset" $(echo "$asset" | sed 's/src/dist/') &
+done
+
 wait $(jobs -p)

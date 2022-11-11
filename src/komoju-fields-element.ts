@@ -1,7 +1,7 @@
 import './types.d'
 import spinner from './spinner.html'
 
-export default class KomojuFieldsElement extends HTMLElement {
+export default class KomojuFieldsElement extends HTMLElement implements KomojuFieldsConfig {
   static get observedAttributes() {
     return [
       'session',
@@ -10,6 +10,8 @@ export default class KomojuFieldsElement extends HTMLElement {
     ];
   }
 
+  // 'session' is also an attribute. Set the 'session' attribute to a stringified JSON of
+  // the entire KOMOJU sesion to skip having to fetch it from KOMOJU again.
   session: KomojuSession | null = null
   module: {
     render: KomojuRenderFunction,

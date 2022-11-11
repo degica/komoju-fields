@@ -1,46 +1,66 @@
 <div class="fields credit_card">
   <label class="field field-name">
     <span>Name</span>
-    <input id="cc-name" autocomplete="cc-name">
+    <input id="cc-name" autocomplete="cc-name" required>
   </label>
 
   <label class="field field-number">
     <span>Card Number</span>
-    <input id="cc-number" autocomplete="cc-number">
+    <input id="cc-number" autocomplete="cc-number" required>
   </label>
 
-  <label class="field field-month">
+  <label class="field field-exp">
     <span>Expiration</span>
     <input
       id="cc-exp"
       placeholder="MM / YY"
       maxlength="7"
       autocomplete="cc-exp"
+      required
     >
   </label>
 
-  <label class="field field-year">
+  <label class="field field-cvc">
     <span>CVC</span>
-    <input id="cc-cvc" autocomplete="cc-csc">
+    <input id="cc-cvc" autocomplete="cc-csc" maxlength="10" required>
   </label>
 </div>
 
 <style>
   .credit_card {
+    box-sizing: border-box;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
   }
 
   .field {
     display: flex;
     flex-direction: column;
+    width: 100%;
   }
 
-  #cc-number {
+  .field-exp,.field-cvc {
+    width: 49%;
+  }
+
+  input {
+    background-image: inherit;
+  }
+
+  #cc-number,#cc-cvc {
     padding-right: 2.5rem;
-    background-image: url(https://komoju.com/payment_methods/credit_card.svg);
     background-repeat: no-repeat;
     background-position-x: right;
     background-size: contain;
+  }
+
+  #cc-number {
+    background-image: url(https://komoju.com/payment_methods/credit_card.svg);
+  }
+
+  #cc-cvc {
+    background-image: url(https://komoju.com/payment_methods/credit_card.svg);
   }
 </style>
