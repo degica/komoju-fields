@@ -1,6 +1,6 @@
 type CardType = 'visa' | 'mastercard' | 'amex' | 'jcb' | 'jcb15' | 'diner' | 'discover' | 'unionpay' | 'unknown';
 
-export function cardTypeToKomojuSubtype(type: CardType): string {
+export function cardTypeToKomojuSubtype(type: CardType) {
   if (type === 'amex') return 'american_express';
   if (type === 'diner') return 'diners_club';
   if (type === 'jcb15') return 'jcb';
