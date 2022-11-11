@@ -73,10 +73,26 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     this.setAttribute('payment-type', value ?? '');
   }
 
+  // We start by just showing a spinner.
   constructor() {
     super();
     const root = this.attachShadow({mode: 'open'});
     root.innerHTML = spinner;
+  }
+
+  // Universal helper for fetching localized messages.
+  t(i18n: I18n, key: string) {
+    const locale = !this.session ? this.inferLocaleFromBrowser() : this.session.default_locale;
+    const message = i18n[locale][key];
+    if (!message) throw new Error(`BUG: invalid translation key ${key}`);
+    return message;
+  }
+
+  // If the session doesn't have a locale, we can infer it from the browser.
+  inferLocaleFromBrowser() {
+    const locale = navigator.language.slice(0, 2);
+    if (locale === 'ja') return 'ja';
+    else return 'en';
   }
 
   // Reactive attribute handling. When session or payment type is changed, we want to re-render.

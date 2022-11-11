@@ -2,6 +2,7 @@ import '../../types.d'
 import html from './template.html'
 import { convertNumbersToHalfWidth } from '../../shared/char-width-utils';
 import { addValidation } from '../../shared/validation';
+import * as i18n from './i18n';
 import {
   cardType,
   formatCardNumber,
@@ -16,6 +17,12 @@ export const render: KomojuRenderFunction = (root, _paymentMethod) => {
 }
 
 function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig) {
+  // Translate labels
+  document.querySelectorAll('.translated').forEach((span) => {
+    if (!span.textContent) return;
+    span.textContent = config.t(i18n, span.textContent);
+  });
+
   // So, IME. We don't want to do auto-formatting while IME is active.
   document.querySelectorAll('input').forEach((input) => {
     input.addEventListener('compositionstart', () => {
@@ -53,8 +60,8 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
   // Card number validation: luhn check
   addValidation(number, (input) => {
     const value = input.value.replace(/\D/g, '');
-    if (value === '') return 'required';
-    if (!luhnCheck(value)) return 'Invalid number';
+    if (value === '') return config.t(i18n, 'error.required');
+    if (!luhnCheck(value)) return config.t(i18n, 'error.invalid-number');
     return null;
   });
 
