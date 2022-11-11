@@ -28,6 +28,8 @@
 
 <style>
   .credit_card {
+    --invalid-color: red;
+
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
@@ -41,12 +43,12 @@
   }
 
   komoju-error {
-    color: red;
+    color: var(--invalid-color);
   }
 
   .invalid {
-    border-color: red;
-    color: red;
+    border-color: var(--invalid-color);
+    color: var(--invalid-color);
   }
 
   .field {
