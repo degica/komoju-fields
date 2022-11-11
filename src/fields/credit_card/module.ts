@@ -35,6 +35,13 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
     });
   });
 
+  // Card holder name validation: just make sure it's not empty
+  const name = document.getElementById('cc-name')! as HTMLInputElement;
+  addValidation(name, (input) => {
+    if (input.value === '') return config.t(i18n, 'error.required');
+    return null;
+  });
+
   // Credit card number
   const number = document.getElementById('cc-number')! as HTMLInputElement;
   const defaultCardImage = `url(${config.komojuCdn}/static/credit_card_number.svg)`
@@ -151,6 +158,12 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
   // Here we just want to set the helper image.
   const cvc = document.getElementById('cc-cvc')! as HTMLInputElement;
   cvc.style.backgroundImage = `url(${config.komojuCdn}/static/credit_card_cvc.svg)`;
+
+  // CVC validation: just make sure it's not empty
+  addValidation(cvc, (input) => {
+    if (input.value === '') return config.t(i18n, 'error.required');
+    return null;
+  });
 }
 
 export const paymentDetails: KomojuPaymentDetailsFunction = (root, _paymentMethod) => {
