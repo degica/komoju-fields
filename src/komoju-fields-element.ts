@@ -81,10 +81,9 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   }
 
   // Universal helper for fetching localized messages.
-  t(i18n: I18n, key: string) {
+  t(i18n: I18n, key: keyof typeof i18n['en']) {
     const locale = !this.session ? this.inferLocaleFromBrowser() : this.session.default_locale;
     const message = i18n[locale][key];
-    if (!message) throw new Error(`BUG: invalid translation key ${key}`);
     return message;
   }
 
@@ -107,7 +106,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
         const response = await this.komojuFetch('GET', `/api/v1/sessions/${newValue}`);
 
         if (response.status === 404) {
-          console.error('Invalid KOMOJU session', newValue);
+          console.error('Invalid KOMOJU session ID', newValue);
           return;
         }
 
@@ -166,6 +165,19 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     }
     const paymentMethod = this.session.payment_methods.find(method => method.type === this.paymentType);
     if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
+
+    // Check for invalid input
+    const invalidFields = this.shadowRoot.querySelectorAll('.invalid');
+    if (invalidFields.length > 0) {
+      // Emit an event so implementers can handle this.
+      const event = new CustomEvent('invalid', {
+        bubbles: true,
+        composed: true,
+      });
+
+      this.dispatchEvent(event);
+      return;
+    }
 
     const paymentDetails = this.module.paymentDetails(this.shadowRoot, paymentMethod);
     const payResponse = await this.komojuFetch('POST', `/api/v1/sessions/${this.session.id}/pay`, {

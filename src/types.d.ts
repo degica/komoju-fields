@@ -42,8 +42,9 @@ interface KomojuPayResult {
 type KomojuRenderFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => void;
 type KomojuPaymentDetailsFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => object;
 
-type I18n = { [index: string]: { [index: string]: string } };
-type TranslationFunction = (i18n: I18n, key: string) => string;
+// These i18n types will catch invalid keys and missing translations.
+type I18n = { [index: string]: any };
+type TranslationFunction = <Messages extends I18n>(i18n: Messages, key: keyof Messages['en']) => string;
 
 // Individual payment methods will access certain attributes of the main <komoju-fields> element.
 // This interface defines those attributes.

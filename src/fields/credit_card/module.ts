@@ -20,7 +20,9 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
   // Translate labels
   document.querySelectorAll('.translated').forEach((span) => {
     if (!span.textContent) return;
-    span.textContent = config.t(i18n, span.textContent);
+    const key = span.textContent;
+    if (!(key in i18n.en)) throw new Error(`BUG: invalid translation key ${String(key)}`);
+    span.textContent = config.t(i18n, key as keyof typeof i18n.en);
   });
 
   // So, IME. We don't want to do auto-formatting while IME is active.
@@ -98,6 +100,51 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
 
     input.value = value;
     lastExpValue = value;
+  });
+
+  // Expiration validation: format and date
+  addValidation(exp, (input) => {
+    const mmyy = input.value.replace(/[^0-9\/]/g, '');
+    const [month, year] = mmyy.split('/');
+
+    // Complain about incomplete expiration
+    if (
+      month == null ||
+      year == null ||
+      year.length !== 2 ||
+      month.length !== 2 ||
+      !/^\d{2}\/\d{2}$/.test(mmyy)
+    ) {
+      return config.t(i18n, 'error.incomplete');
+    }
+
+    const now = new Date();
+    const currentYear = parseInt(
+      now
+        .getFullYear()
+        .toString()
+        .substr(2, 2)
+    );
+    const currentMonth = now.getMonth() + 1;
+    const monthNum = parseInt(month);
+    const yearNum = parseInt(year);
+
+    // Complain if year is in the past
+    if (yearNum < currentYear) {
+      return config.t(i18n, 'error.expired');
+    }
+
+    // Complain if month is in the past
+    if (yearNum === currentYear && monthNum < currentMonth) {
+      return config.t(i18n, 'error.expired');
+    }
+
+    // Complain if month is past December
+    if (monthNum > 12 || monthNum <= 0) {
+      return config.t(i18n, 'error.invalid-month');
+    }
+
+    return null;
   });
 
   // CVC
