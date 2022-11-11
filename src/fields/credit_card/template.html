@@ -35,6 +35,20 @@
     justify-content: space-between;
   }
 
+  input {
+    background-image: inherit;
+    transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  }
+
+  komoju-error {
+    color: red;
+  }
+
+  .invalid {
+    border-color: red;
+    color: red;
+  }
+
   .field {
     display: flex;
     flex-direction: column;
@@ -43,10 +57,6 @@
 
   .field-exp,.field-cvc {
     width: 49%;
-  }
-
-  input {
-    background-image: inherit;
   }
 
   #cc-number,#cc-cvc {

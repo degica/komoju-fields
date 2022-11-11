@@ -1,10 +1,17 @@
 import '../../types.d'
-import text from './template.html'
+import html from './template.html'
 import { convertNumbersToHalfWidth } from '../../shared/char-width-utils';
-import { cardType, formatCardNumber, cardNumberMaxLength, cardTypeToKomojuSubtype } from './card-number-utils';
+import { addValidation } from '../../shared/validation';
+import {
+  cardType,
+  formatCardNumber,
+  cardNumberMaxLength,
+  cardTypeToKomojuSubtype,
+  luhnCheck,
+} from './card-number-utils';
 
-export const render: KomojuRenderFunction = (root, paymentMethod) => {
-  root.innerHTML = text;
+export const render: KomojuRenderFunction = (root, _paymentMethod) => {
+  root.innerHTML = html;
   initializeInputs(root, root.host as KomojuFieldsConfig);
 }
 
@@ -20,10 +27,11 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
   });
 
   // Credit card number
-  // Format: 1234 5678 9012 3456 (sometimes more or less digits)
   const number = document.getElementById('cc-number')! as HTMLInputElement;
   const defaultCardImage = `url(${config.komojuCdn}/static/credit_card_number.svg)`
   number.style.backgroundImage = defaultCardImage;
+
+  // Card number format: 1234 5678 9012 3456 (sometimes more or less digits)
   number.addEventListener('input', (event) => {
     const input = event.target as HTMLInputElement;
     if (input.dataset.ime === 'active') return;
@@ -42,8 +50,16 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
       `url(https://komoju.com/payment_methods/credit_card.svg?brands=${brand})`;
   });
 
+  // Card number validation: luhn check
+  addValidation(number, (input) => {
+    const value = input.value.replace(/\D/g, '');
+    if (value === '') return 'required';
+    if (!luhnCheck(value)) return 'Invalid number';
+    return null;
+  });
+
   // Expiration date
-  // Format: MM/YY. We automatically insert the slash.
+  // Format: MM / YY. We automatically insert the slash.
   const exp = document.getElementById('cc-exp')! as HTMLInputElement;
   let lastExpValue = exp.value;
   exp.addEventListener('input', (event) => {

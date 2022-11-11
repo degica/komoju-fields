@@ -64,3 +64,30 @@ export function cardType(value: string): CardType {
     return 'unknown';
   }
 }
+
+export function luhnCheck(cardNumber: string) {
+  // accept only digits and spaces
+  if (/[^0-9\s]+/.test(cardNumber)) {
+    return false;
+  }
+
+  let sum = 0;
+  let shouldDouble = false;
+  cardNumber = cardNumber.replace(/\D/g, '');
+  const length = cardNumber.length;
+
+  // iterating backwards, double every second digit
+  for (let i = length - 1; i >= 0; --i) {
+    let digit = parseInt(cardNumber.charAt(i), 10);
+
+    // double. if doubled digit is > 9, subtract 9
+    if (shouldDouble && (digit *= 2) > 9) {
+      digit -= 9;
+    }
+
+    sum += digit;
+    shouldDouble = !shouldDouble;
+  }
+
+  return sum % 10 === 0;
+}
