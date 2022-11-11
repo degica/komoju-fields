@@ -48,6 +48,11 @@ Here's a rundown of the "stack":
 
 The build script produces multiple separate bundles: a **main bundle** and **one bundle for each supported payment method**. This allows us to only send the code for the payment methods that are actually used in a given session. The **main bundle** uses [**dynamic import**](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) to load the payment method bundles on demand.
 
+Build artifacts:
+* `dist/fields.js` the main bundle
+* `dist/fields/*/module.js` the payment method bundles
+* `dist/static/*` static assets (e.g. icons, stylesheets)
+
 To run the test server:
 ```sh
 cd test-app
@@ -56,3 +61,7 @@ npm run start
 
 http://localhost:3000/ <- demo page that fetches a new session from KOMOJU
 http://localhost:3000/easy <- demo page that uses a pre-generated session (fast to load, easy to rapidly iterate)
+
+### Things to watch out for
+
+* If multiple payment method modules import the same code, that code will be duplicated in each bundle. This is OK for small functions, but if you're importing a large library, you should consider moving it to the main bundle and explicitly passing it into the payment method module.
