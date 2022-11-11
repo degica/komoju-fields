@@ -30,6 +30,7 @@ export default class KomojuErrorElement extends HTMLElement {
 
   // Animates the height of the error message when it is removed from the page.
   override remove() {
+    this.classList.add('removing');
     this.container.style.height = '0';
     this.container.addEventListener('transitionend', () => {
       super.remove();

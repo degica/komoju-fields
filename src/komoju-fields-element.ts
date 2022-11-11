@@ -1,5 +1,6 @@
 import './types.d'
 import spinner from './spinner.html'
+import { runValidation } from './shared/validation'
 
 export default class KomojuFieldsElement extends HTMLElement implements KomojuFieldsConfig {
   static get observedAttributes() {
@@ -18,6 +19,9 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     paymentDetails: KomojuPaymentDetailsFunction
   } | null = null
 
+  // When a <komoju-fields> element appears inside of a <form> tag,
+  // we attach a submit handler to it.
+  // This keeps track of that handler and lets us remove it when disconnected.
   formSubmitHandler?: {
     form: HTMLFormElement,
     handler: (event: Event) => void
@@ -167,18 +171,20 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
 
     // Check for invalid input
-    const invalidFields = this.shadowRoot.querySelectorAll('.invalid');
-    if (invalidFields.length > 0) {
+    const validatedFields = this.shadowRoot.querySelectorAll('.has-validation');
+    const errors = Array.prototype.map.call(validatedFields, (field) =>
+      field instanceof HTMLInputElement ? runValidation(field) : null
+    );
+    if (errors.some(error => error != null)) {
       // Emit an event so implementers can handle this.
-      const event = new CustomEvent('invalid', {
-        bubbles: true,
-        composed: true,
-      });
-
-      this.dispatchEvent(event);
+      this.dispatchEvent(new CustomEvent('komoju-error', {
+        detail: { errors }, bubbles: true, composed: true,
+      }));
       return;
     }
 
+    // Now we can pull the payment details hash from the payment method module
+    // and send it to KOMOJU.
     const paymentDetails = this.module.paymentDetails(this.shadowRoot, paymentMethod);
     const payResponse = await this.komojuFetch('POST', `/api/v1/sessions/${this.session.id}/pay`, {
       // TODO: supply fraud_details too
