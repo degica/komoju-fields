@@ -47,6 +47,7 @@ app.get('/', async (_req, res) => {
     body: JSON.stringify({
       amount: 6000,
       currency: 'JPY',
+      default_locale: 'en',
       payment_data: {
         external_order_num: `order-${Math.floor(Math.random() * 1000000000)}`,
       },
