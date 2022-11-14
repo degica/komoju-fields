@@ -1,7 +1,13 @@
+import '../types.d';
+
 type ValidationCallback = (input: HTMLInputElement) => string | null;
 
 // Adds validation to an input element.
-export function addValidation(input: HTMLInputElement, callback: ValidationCallback) {
+export function addValidation<Translations extends I18n>(
+  i18n: Translations,
+  input: HTMLInputElement,
+  callback: (input: HTMLInputElement) => keyof Translations['en'] | null
+) {
   // Add a class so that we know this input has validation.
   input.classList.add('has-validation');
 
@@ -15,11 +21,11 @@ export function addValidation(input: HTMLInputElement, callback: ValidationCallb
   const validate = (event: Event) => {
     const input = event.target as HTMLInputElement;
 
-    const errorMessage = callback(input);
+    const errorMessageKey = callback(input);
 
-    if (errorMessage) {
+    if (errorMessageKey) {
       input.classList.add('invalid');
-      input.parentElement?.append(createErrorElement(errorMessage));
+      input.parentElement?.append(createErrorElement(errorMessageKey as string));
     }
   };
   input.addEventListener('blur', (event) => {
@@ -51,8 +57,10 @@ export function runValidation(input: HTMLInputElement) {
 
 // Creates the error message element that appears under an invalid input.
 // Mainly just called by addValidation().
-export function createErrorElement(message: string) {
+export function createErrorElement(messageKey: string) {
   const el = window.document.createElement('komoju-error');
-  el.textContent = message;
+  const i18nEl = window.document.createElement('komoju-i18n') as KomojuI18nElement;
+  i18nEl.key = messageKey;
+  el.appendChild(i18nEl);
   return el;
 }

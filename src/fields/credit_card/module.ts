@@ -2,7 +2,6 @@ import '../../types.d'
 import html from './template.html'
 import { convertNumbersToHalfWidth } from '../../shared/char-width-utils';
 import { addValidation } from '../../shared/validation';
-import * as i18n from './i18n';
 import {
   cardType,
   formatCardNumber,
@@ -11,20 +10,16 @@ import {
   luhnCheck,
 } from './card-number-utils';
 
+import { registerMessages } from '../../shared/translations';
+import * as i18n from './i18n';
+registerMessages(i18n);
+
 export const render: KomojuRenderFunction = (root, _paymentMethod) => {
   root.innerHTML = html;
   initializeInputs(root, root.host as KomojuFieldsConfig);
 }
 
 function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig) {
-  // Translate labels
-  document.querySelectorAll('.translated').forEach((span) => {
-    if (!span.textContent) return;
-    const key = span.textContent;
-    if (!(key in i18n.en)) throw new Error(`BUG: invalid translation key ${String(key)}`);
-    span.textContent = config.t(i18n, key as keyof typeof i18n.en);
-  });
-
   // So, IME. We don't want to do auto-formatting while IME is active.
   document.querySelectorAll('input').forEach((input) => {
     input.addEventListener('compositionstart', () => {
@@ -37,8 +32,8 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
 
   // Card holder name validation: just make sure it's not empty
   const name = document.getElementById('cc-name')! as HTMLInputElement;
-  addValidation(name, (input) => {
-    if (input.value === '') return config.t(i18n, 'error.required');
+  addValidation(i18n, name, (input) => {
+    if (input.value === '') return 'cc.error.required';
     return null;
   });
 
@@ -67,10 +62,10 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
   });
 
   // Card number validation: luhn check
-  addValidation(number, (input) => {
+  addValidation(i18n, number, (input) => {
     const value = input.value.replace(/\D/g, '');
-    if (value === '') return config.t(i18n, 'error.required');
-    if (!luhnCheck(value)) return config.t(i18n, 'error.invalid-number');
+    if (value === '') return 'cc.error.required';
+    if (!luhnCheck(value)) return 'cc.error.invalid-number';
     return null;
   });
 
@@ -110,7 +105,7 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
   });
 
   // Expiration validation: format and date
-  addValidation(exp, (input) => {
+  addValidation(i18n, exp, (input) => {
     const mmyy = input.value.replace(/[^0-9\/]/g, '');
     const [month, year] = mmyy.split('/');
 
@@ -122,7 +117,7 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
       month.length !== 2 ||
       !/^\d{2}\/\d{2}$/.test(mmyy)
     ) {
-      return config.t(i18n, 'error.incomplete');
+      return 'cc.error.incomplete';
     }
 
     const now = new Date();
@@ -138,17 +133,17 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
 
     // Complain if year is in the past
     if (yearNum < currentYear) {
-      return config.t(i18n, 'error.expired');
+      return 'cc.error.expired';
     }
 
     // Complain if month is in the past
     if (yearNum === currentYear && monthNum < currentMonth) {
-      return config.t(i18n, 'error.expired');
+      return 'cc.error.expired';
     }
 
     // Complain if month is past December
     if (monthNum > 12 || monthNum <= 0) {
-      return config.t(i18n, 'error.invalid-month');
+      return 'cc.error.invalid-month';
     }
 
     return null;
@@ -160,8 +155,8 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
   cvc.style.backgroundImage = `url(${config.komojuCdn}/static/credit_card_cvc.svg)`;
 
   // CVC validation: just make sure it's not empty
-  addValidation(cvc, (input) => {
-    if (input.value === '') return config.t(i18n, 'error.required');
+  addValidation(i18n, cvc, (input) => {
+    if (input.value === '') return 'cc.error.required';
     return null;
   });
 }

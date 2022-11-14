@@ -1,6 +1,10 @@
 import './types.d'
 import spinner from './spinner.html'
 import { runValidation } from './shared/validation'
+import KomojuI18nElement from './shared/komoju-i18n-element';
+
+// Language gets stored in here, mostly controlled by <komoju-fields>.
+declare let window: WindowWithKomojuTranslations;
 
 export default class KomojuFieldsElement extends HTMLElement implements KomojuFieldsConfig {
   static get observedAttributes() {
@@ -8,6 +12,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       'session',
       'session-id',
       'payment-type',
+      'locale',
     ];
   }
 
@@ -77,18 +82,20 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     this.setAttribute('payment-type', value ?? '');
   }
 
+  // Attribute: locale
+  // Language of text to show. Defaults to the browser's language.
+  get locale() {
+    return this.getAttribute('locale');
+  }
+  set locale(value) {
+    this.setAttribute('locale', value ?? '');
+  }
+
   // We start by just showing a spinner.
   constructor() {
     super();
     const root = this.attachShadow({mode: 'open'});
     root.innerHTML = spinner;
-  }
-
-  // Universal helper for fetching localized messages.
-  t(i18n: I18n, key: keyof typeof i18n['en']) {
-    const locale = !this.session ? this.inferLocaleFromBrowser() : this.session.default_locale;
-    const message = i18n[locale][key];
-    return message;
   }
 
   // If the session doesn't have a locale, we can infer it from the browser.
@@ -101,10 +108,14 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   // Reactive attribute handling. When session or payment type is changed, we want to re-render.
   attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
     if (name === 'session') {
+      if (!newValue || newValue == '') return;
+
       this.session = JSON.parse(newValue);
       if (!this.paymentType) this.paymentType = this.session!.payment_methods[0].type;
       this.render();
-    } else if (name === 'session-id' && newValue != '') {
+    } else if (name === 'session-id') {
+      if (!newValue || newValue == '') return;
+
       // Just in case publishable-key is set before session-id, we fetch the session on next tick.
       setTimeout(async () => {
         const response = await this.komojuFetch('GET', `/api/v1/sessions/${newValue}`);
@@ -127,8 +138,20 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       }, 0);
     }
     else if (name === 'payment-type') {
+      if (!newValue || newValue == '') return;
+
       if (this.shadowRoot) this.shadowRoot.innerHTML = spinner;
       this.render();
+    }
+    else if (name === 'locale') {
+      if (!newValue || newValue == '') return;
+
+      window.komojuLanguage = newValue;
+      const renderI18n = (el: Element) => (el as KomojuI18nElement).render();
+
+      document.querySelectorAll('komoju-i18n').forEach(renderI18n);
+      if (!this.shadowRoot) return;
+      this.shadowRoot.querySelectorAll('komoju-i18n').forEach(renderI18n);
     }
   }
 

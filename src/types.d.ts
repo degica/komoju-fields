@@ -44,14 +44,23 @@ type KomojuPaymentDetailsFunction = (root: ShadowRoot, paymentMethod: KomojuPaym
 
 // These i18n types will catch invalid keys and missing translations.
 type I18n = { [index: string]: any };
-type TranslationFunction = <Messages extends I18n>(i18n: Messages, key: keyof Messages['en']) => string;
+
+// Extension of the global window object with komojuTranslations for use by <komoju-i18n> elements.
+interface WindowWithKomojuTranslations extends Window {
+  komojuTranslations: I18n,
+  komojuLanguage: string,
+}
 
 // Individual payment methods will access certain attributes of the main <komoju-fields> element.
 // This interface defines those attributes.
 interface KomojuFieldsConfig extends HTMLElement {
   komojuCdn: string,
   komojuApi: string,
-  t: TranslationFunction,
+}
+
+interface KomojuI18nElement extends HTMLElement {
+  key: string | null,
+  render(): void,
 }
 
 declare module '*.html' {
