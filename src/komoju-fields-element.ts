@@ -146,7 +146,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     else if (name === 'locale') {
       if (!newValue || newValue == '') return;
 
-      window.komojuLanguage = newValue;
+      window.komojuLanguage = newValue.substring(0, 2);
       const renderI18n = (el: Element) => (el as KomojuI18nElement).render();
 
       document.querySelectorAll('komoju-i18n').forEach(renderI18n);
