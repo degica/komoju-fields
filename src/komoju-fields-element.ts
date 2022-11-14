@@ -111,6 +111,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       if (!newValue || newValue == '') return;
 
       this.session = JSON.parse(newValue);
+      window.komojuLanguage = this.session!.default_locale.substring(0, 2);
       if (!this.paymentType) this.paymentType = this.session!.payment_methods[0].type;
       this.render();
     } else if (name === 'session-id') {
@@ -133,6 +134,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
         this.session = await response.json();
         if (!this.session) throw new Error('KOMOJU returned a null session');
         if (!this.paymentType) this.paymentType = this.session.payment_methods[0].type;
+        window.komojuLanguage = this.session.default_locale.substring(0, 2);
 
         this.render();
       }, 0);
