@@ -98,13 +98,6 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     root.innerHTML = spinner;
   }
 
-  // If the session doesn't have a locale, we can infer it from the browser.
-  inferLocaleFromBrowser() {
-    const locale = navigator.language.slice(0, 2);
-    if (locale === 'ja') return 'ja';
-    else return 'en';
-  }
-
   // Reactive attribute handling. When session or payment type is changed, we want to re-render.
   attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
     if (name === 'session') {
