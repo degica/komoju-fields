@@ -26,6 +26,8 @@ export default class KomojuErrorElement extends HTMLElement {
   // Animate the height of the error message when it appears on the page.
   connectedCallback() {
     this.container.style.height = this.container.scrollHeight + 'px';
+    // TODO: we can use a resize ovserver to make sure this height adjusts if the
+    // parent element's width changes.
   }
 
   // Animates the height of the error message when it is removed from the page.
