@@ -171,6 +171,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
 
     // Check for invalid input
+    this.shadowRoot.querySelectorAll('komoju-error').forEach(error => error.remove());
     const validatedFields = this.shadowRoot.querySelectorAll('.has-validation');
     const errors = Array.prototype.map.call(validatedFields, (field) =>
       field instanceof HTMLInputElement ? runValidation(field) : null
