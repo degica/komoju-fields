@@ -182,6 +182,10 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   // 2. An external payment provider URL (i.e. to log into a payment app or show a QR code)
   // 3. The session's return_url in the case where payment is completed instantly
   async submit() {
+    // TODO: small detail, but I kind of want to fade out the whole element during submit to prevent
+    // double submits. Once that is in, I think we are feature complete and can start writing tests
+    // and adding more payment methods.
+
     if (!this.module || !this.shadowRoot || !this.session) {
       throw new Error('Attempted to submit before selecting KOMOJU Payment method');
     }
