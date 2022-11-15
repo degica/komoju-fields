@@ -200,9 +200,10 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     );
     if (errors.some(error => error != null)) {
       // Emit an event so implementers can handle this.
-      this.dispatchEvent(new CustomEvent('komoju-error', {
+      this.dispatchEvent(new CustomEvent('komoju-invalid', {
         detail: { errors }, bubbles: true, composed: true,
       }));
+
       return;
     }
 
@@ -216,8 +217,21 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     const payResult = await payResponse.json() as KomojuPayResult;
 
     if (payResult.error) {
-      // TODO: handle this better
       console.error(payResult);
+
+      // Emit an event so implementers can handle this.
+      const showError = this.dispatchEvent(new CustomEvent('komoju-error', {
+        detail: { error: payResult.error }, bubbles: true, composed: true,
+      }));
+
+      // Show errors if implementers don't cancel the event.
+      if (showError) {
+        this.shadowRoot.querySelectorAll('.generic-error-message').forEach(container => {
+          const error = document.createElement('komoju-error');
+          error.textContent = payResult.error as string;
+          container.append(error);
+        });
+      }
       return;
     }
 
