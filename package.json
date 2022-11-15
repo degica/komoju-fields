@@ -6,7 +6,9 @@
   "scripts": {
     "lint": "bin/lint.sh",
     "build": "bin/build.sh",
-    "watch": "bin/watch.sh"
+    "watch": "bin/watch.sh",
+    "test": "bin/test.sh",
+    "test-app": "bin/test-app.sh"
   },
   "repository": {
     "type": "git",
