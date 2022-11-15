@@ -71,7 +71,7 @@ describe('KOMOJU Fields: Credit Card', () => {
     cy.get('komoju-fields').shadow().contains('Month must be between 1 and 12').should('not.exist');
   });
 
-  it('shows errors when I try to submit an empty form', () => {
+  it('shows errors when I try to submit an empty form, lets me switch languages', () => {
     cy.visit('/')
 
     // Kind of a hack just to wait for the fields to actually load before clicking Pay.
@@ -81,5 +81,12 @@ describe('KOMOJU Fields: Credit Card', () => {
     cy.get('komoju-fields').shadow().contains('Required').should('exist');
     cy.get('komoju-fields').shadow().contains('Please input the full expiration date').should('exist');
     cy.contains('Pay').click();
+
+    // Now we can switch languages and the errors should be translated along with the rest of the page.
+    cy.get('#locale-select').select('Japanese');
+    cy.get('komoju-fields').shadow().contains('Cardholder name').should('not.exist');
+    cy.get('komoju-fields').shadow().contains('カード所有者名').should('exist');
+    cy.get('komoju-fields').shadow().contains('Required').should('not.exist');
+    cy.get('komoju-fields').shadow().contains('必須項目です').should('exist');
   });
 });

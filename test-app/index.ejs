@@ -16,6 +16,18 @@
 </head>
 <body>
   <form id="form">
+    <!-- For testing locale attribute: -->
+    <select id="locale-select" onchange="changeLocale(event)">
+      <option value="en">English</option>
+      <option value="ja">Japanese</option>
+    </select>
+    <script>
+      function changeLocale(event) {
+        const fields = document.querySelector('komoju-fields');
+        fields.locale = event.target.value;
+      }
+    </script>
+
     <!-- Optional payment method picker. -->
     <komoju-picker></komoju-picker>
 
