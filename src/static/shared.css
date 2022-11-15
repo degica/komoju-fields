@@ -1,0 +1,36 @@
+div,label {
+  --invalid-color: red;
+}
+
+komoju-error {
+  color: var(--invalid-color);
+}
+
+komoju-fade {
+  position: absolute;
+
+  background: white;
+
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+komoju-fade.show {
+  opacity: 0.65;
+}
+
+input {
+  background-image: inherit;
+  transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.invalid {
+  border-color: var(--invalid-color);
+  color: var(--invalid-color);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}

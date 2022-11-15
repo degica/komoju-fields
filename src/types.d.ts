@@ -35,7 +35,7 @@ interface KomojuSession {
 
 interface KomojuPayResult {
   status: 'pending' | 'completed' | 'error',
-  error?: string | object,
+  error?: string | { code: string, details: object, message: string, param: string | null },
   redirect_url?: string,
 }
 

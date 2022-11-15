@@ -24,40 +24,18 @@
     <komoju-i18n key="cc.label.cvc"></komoju-i18n>
     <input id="cc-cvc" autocomplete="cc-csc" maxlength="10" required>
   </label>
-
-  <label class="generic-error-message">
-  </label>
 </div>
+
+<label class="generic-error-message">
+</label>
 
 <style>
   .credit_card {
-    --invalid-color: red;
-
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: space-between;
-  }
-
-  input {
-    background-image: inherit;
-    transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-  }
-
-  komoju-error {
-    color: var(--invalid-color);
-  }
-
-  .invalid {
-    border-color: var(--invalid-color);
-    color: var(--invalid-color);
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
   }
 
   .field-exp,.field-cvc {

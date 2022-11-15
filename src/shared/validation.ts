@@ -4,7 +4,7 @@ type ValidationCallback = (input: HTMLInputElement) => string | null;
 
 // Adds validation to an input element.
 export function addValidation<Translations extends I18n>(
-  i18n: Translations,
+  _i18n: Translations, // Used only by typescript to compile-time catch missing translations.
   input: HTMLInputElement,
   callback: (input: HTMLInputElement) => keyof Translations['en'] | null
 ) {

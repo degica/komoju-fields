@@ -182,10 +182,6 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   // 2. An external payment provider URL (i.e. to log into a payment app or show a QR code)
   // 3. The session's return_url in the case where payment is completed instantly
   async submit() {
-    // TODO: small detail, but I kind of want to fade out the whole element during submit to prevent
-    // double submits. Once that is in, I think we are feature complete and can start writing tests
-    // and adding more payment methods.
-
     if (!this.module || !this.shadowRoot || !this.session) {
       throw new Error('Attempted to submit before selecting KOMOJU Payment method');
     }
@@ -209,6 +205,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
 
     // Now we can pull the payment details hash from the payment method module
     // and send it to KOMOJU.
+    this.startFade();
     const paymentDetails = this.module.paymentDetails(this.shadowRoot, paymentMethod);
     const payResponse = await this.komojuFetch('POST', `/api/v1/sessions/${this.session.id}/pay`, {
       // TODO: supply fraud_details too
@@ -228,14 +225,18 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       if (showError) {
         this.shadowRoot.querySelectorAll('.generic-error-message').forEach(container => {
           const error = document.createElement('komoju-error');
-          error.textContent = payResult.error as string;
+          if (typeof payResult.error === 'string') {
+            error.textContent = payResult.error as string;
+          } else if (payResult.error?.message) {
+            error.textContent = payResult.error.message as string;
+          }
           container.append(error);
         });
       }
+      this.endFade();
       return;
     }
 
-    this.shadowRoot.innerHTML = spinner;
     window.location.href = payResult.redirect_url!;
   }
 
@@ -252,6 +253,12 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
 
     if (!this.shadowRoot) throw new Error('KOMOJU Fields element has no shadow root (internal bug)');
     this.module.render(this.shadowRoot, paymentMethod);
+
+    // Add global styles (src = shared.css)
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = `${this.komojuCdn}/static/shared.css`;
+    this.shadowRoot.prepend(link);
   }
 
   // fetch wrapper with KOMOJU authentication already handled.
@@ -264,6 +271,22 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
         authorization: `Basic ${btoa(`${this.publishableKey}:`)}`,
       },
       body: body ? JSON.stringify(body) : undefined
+    });
+  }
+
+  // Fade out fields while loading
+  private startFade() {
+    const fade = document.createElement('komoju-fade');
+    setTimeout(() => fade.classList.add('show'), 0);
+    this.shadowRoot?.querySelector('.fields')?.prepend(fade);
+  }
+
+  // Remove the fade effect created by startFade()
+  private endFade() {
+    this.shadowRoot?.querySelectorAll('komoju-fade').forEach(el => {
+      const fade = el as HTMLElement;
+      fade.classList.remove('show');
+      fade.addEventListener('transitionend', () => fade.remove());
     });
   }
 }
