@@ -47,7 +47,7 @@ async function showTestPage(req, res, options) {
         external_order_num: `order-${Math.floor(Math.random() * 1000000000)}`,
       },
       payment_types: ['credit_card', 'bank_transfer', 'konbini', 'paypay', 'aupay'],
-      return_url: 'http://localhost:3000/paymentcomplete',
+      return_url: testappUrl('/paymentcomplete'),
     })
   })
   const session = await komojuSessionResponse.json()
@@ -61,7 +61,7 @@ async function showTestPage(req, res, options) {
     sessionString: '',
     session,
     publishableKey: KOMOJU_PUBLISHABLE_KEY,
-    cdn: 'http://localhost:3000',
+    cdn: testappUrl('/'),
     api: KOMOJU_API_URL,
     payment_type: options.payment_type,
   })
@@ -89,7 +89,7 @@ app.get('/easy', async (_req, res) => {
     session: { id: '' },
     sessionString: FULL_SESSION,
     publishableKey: KOMOJU_PUBLISHABLE_KEY,
-    cdn: 'http://localhost:3000',
+    cdn: testappUrl('/'),
     api: KOMOJU_API_URL,
   })
 })
@@ -111,6 +111,11 @@ function komojuHeaders() {
     'authorization': `Basic ${Buffer.from(KOMOJU_SECRET_KEY + ':').toString('base64')}`,
     'content-type': 'application/json',
   }
+}
+
+function testappUrl(req, path) {
+  const url = new URL(path, req.baseUrl ?? req.url);
+  return url.toString();
 }
 
 app.listen(port, () => {
