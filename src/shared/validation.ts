@@ -12,7 +12,7 @@ export function addValidation<Translations extends I18n>(
   input.classList.add('has-validation');
 
   // Tiny detail: if the user has never inputted anything, we don't want to run validations at all
-  // at the risk of showing an erro message when the user is just clicking around.
+  // at the risk of showing an error message when the user is just clicking around.
   input.addEventListener('input', () => {
     input.dataset.validationDirty = 'true';
   });
