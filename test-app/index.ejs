@@ -31,8 +31,8 @@
     <% if (!payment_type) { %>
     <!-- Impromptu picker since the real picker is not ready yet -->
     <select id="payment-type-select" onchange="changePaymentType(event)">
-      <option value="credit_card">Credit Card</option>
-      <option value="konbini" selected>Konbini</option>
+      <option value="credit_card" selected>Credit Card</option>
+      <option value="konbini">Konbini</option>
     </select>
     <script>
       function changePaymentType(event) {

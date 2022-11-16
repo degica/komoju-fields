@@ -47,7 +47,7 @@ async function showTestPage(req, res, options) {
         external_order_num: `order-${Math.floor(Math.random() * 1000000000)}`,
       },
       payment_types: ['credit_card', 'bank_transfer', 'konbini', 'paypay', 'aupay'],
-      return_url: testappUrl('/paymentcomplete'),
+      return_url: testappUrl(req, '/paymentcomplete'),
     })
   })
   const session = await komojuSessionResponse.json()
@@ -61,7 +61,7 @@ async function showTestPage(req, res, options) {
     sessionString: '',
     session,
     publishableKey: KOMOJU_PUBLISHABLE_KEY,
-    cdn: testappUrl('/'),
+    cdn: testappUrl(req, '/'),
     api: KOMOJU_API_URL,
     payment_type: options.payment_type,
   })
@@ -89,7 +89,7 @@ app.get('/easy', async (_req, res) => {
     session: { id: '' },
     sessionString: FULL_SESSION,
     publishableKey: KOMOJU_PUBLISHABLE_KEY,
-    cdn: testappUrl('/'),
+    cdn: testappUrl(req, '/'),
     api: KOMOJU_API_URL,
   })
 })
@@ -114,8 +114,9 @@ function komojuHeaders() {
 }
 
 function testappUrl(req, path) {
-  // Not secure. Don't run this on production!!
-  const url = new URL(path, req.baseUrl ?? req.get('host'));
+  const host = req.get('x-forwarded-host') ?? 'localhost:3000';
+  const scheme = req.get('x-forwarded-scheme') ?? 'http';
+  const url = new URL(path, `${scheme}://${host}`);
   return url.toString();
 }
 
