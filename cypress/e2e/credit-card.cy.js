@@ -1,8 +1,11 @@
 /// <reference types="cypress" />
 
 describe('KOMOJU Fields: Credit Card', () => {
+  beforeEach(() => {
+    cy.visit('/type/credit_card');
+  });
+
   it('can fill out the credit card fields', () => {
-    cy.visit('/')
     cy.get('komoju-fields').shadow().find('#cc-name').type('John Doe');
     cy.get('komoju-fields').shadow().find('#cc-number').type('4242424242424242');
     cy.get('komoju-fields').shadow().find('#cc-exp').type('1299');
@@ -13,8 +16,6 @@ describe('KOMOJU Fields: Credit Card', () => {
   });
 
   it('shows errors on invalid input', () => {
-    cy.visit('/')
-
     cy.log('Invalid card number');
     cy.get('komoju-fields').shadow().find('#cc-name').type('John Doe');
     cy.get('komoju-fields').shadow().find('#cc-number').type('1234123412341234');
@@ -72,8 +73,6 @@ describe('KOMOJU Fields: Credit Card', () => {
   });
 
   it('shows errors when I try to submit an empty form, lets me switch languages', () => {
-    cy.visit('/')
-
     // Kind of a hack just to wait for the fields to actually load before clicking Pay.
     cy.get('komoju-fields').shadow().find('#cc-name').type('John Doe');
 

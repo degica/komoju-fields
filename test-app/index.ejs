@@ -28,8 +28,20 @@
       }
     </script>
 
-    <!-- Optional payment method picker. -->
-    <komoju-picker></komoju-picker>
+    <% if (!payment_type) { %>
+    <!-- Impromptu picker since the real picker is not ready yet -->
+    <select id="payment-type-select" onchange="changePaymentType(event)">
+      <option value="credit_card">Credit Card</option>
+      <option value="konbini" selected>Konbini</option>
+    </select>
+    <script>
+      function changePaymentType(event) {
+        const fields = document.querySelector('komoju-fields');
+        fields.paymentType = event.target.value;
+      }
+    </script>
+    <% } %>
+
 
     <!-- Payment input fields. Contents are dynamic based on the Session's payment types. -->
     <komoju-fields
@@ -38,6 +50,7 @@
       publishable-key="<%= publishableKey %>"
       komoju-cdn="<%= cdn %>"
       komoju-api="<%= api %>"
+      payment-type="<%= payment_type ?? 'konbini' %>"
     ></komoju-fields>
 
     <!-- The komoju-input element will automatically take over the parent form submit logic. -->

@@ -134,6 +134,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     }
     else if (name === 'payment-type') {
       if (!newValue || newValue == '') return;
+      if (!this.session) return;
 
       if (this.shadowRoot) this.shadowRoot.innerHTML = spinner;
       this.render();

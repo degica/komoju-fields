@@ -33,15 +33,7 @@ const FULL_SESSION = "{\"id\":\"cx22xxvn08lpejetb1qeb15ni\",\"resource\":\"sessi
 
 app.use('/', express.static('../dist'))
 
-/*
- ****************************************************************
- * GET /
- * 
- * This is the main example. It creates a new KOMOJU session and renders
- * payment fields for it.
- ****************************************************************
- */
-app.get('/', async (_req, res) => {
+async function showTestPage(req, res, options) {
   res.set('content-type', 'text/html')
 
   const komojuSessionResponse = await fetch(`${KOMOJU_API_URL}/api/v1/sessions`, {
@@ -71,7 +63,24 @@ app.get('/', async (_req, res) => {
     publishableKey: KOMOJU_PUBLISHABLE_KEY,
     cdn: 'http://localhost:3000',
     api: KOMOJU_API_URL,
+    payment_type: options.payment_type,
   })
+}
+
+/*
+ ****************************************************************
+ * GET /
+ *
+ * This is the main example. It creates a new KOMOJU session and renders
+ * payment fields for it.
+ ****************************************************************
+ */
+app.get('/', async (req, res) => {
+  showTestPage(req, res, {})
+})
+app.get('/type/:payment_type', async (req, res) => {
+  const { payment_type } = req.params;
+  showTestPage(req, res, { payment_type })
 })
 
 app.get('/easy', async (_req, res) => {
