@@ -114,7 +114,8 @@ function komojuHeaders() {
 }
 
 function testappUrl(req, path) {
-  const url = new URL(path, req.baseUrl ?? req.url);
+  // Not secure. Don't run this on production!!
+  const url = new URL(path, req.baseUrl ?? req.get('host'));
   return url.toString();
 }
 
