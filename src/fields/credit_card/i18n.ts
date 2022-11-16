@@ -1,6 +1,6 @@
 export const en = {
-  'cc.label.cardholder-name': 'Cardholder Name',
-  'cc.label.card-number': 'Card Number',
+  'cc.label.cardholder-name': 'Cardholder name',
+  'cc.label.card-number': 'Card number',
   'cc.label.expiration': 'Expiration',
   'cc.label.cvc': 'CVC',
   'cc.error.required': 'Required',
