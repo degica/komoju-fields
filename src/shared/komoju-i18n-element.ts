@@ -18,6 +18,10 @@ export default class KomojuI18nElement extends HTMLElement {
     this.setAttribute('key', value ?? '');
   }
 
+  connectedCallback() {
+    this.render();
+  }
+
   attributeChangedCallback(name: string, _oldValue: string, _newValue: string) {
     if (name !== 'key') return;
     this.render();
