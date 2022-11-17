@@ -57,7 +57,7 @@ async function showTestPage(req, res, options) {
     return;
   }
 
-  res.render('index', {
+  res.render(options.template ?? 'index', {
     sessionString: '',
     session,
     publishableKey: KOMOJU_PUBLISHABLE_KEY,
@@ -78,9 +78,30 @@ async function showTestPage(req, res, options) {
 app.get('/', async (req, res) => {
   showTestPage(req, res, {})
 })
+
+/*
+ ****************************************************************
+ * GET /type/:payment_type
+ *
+ * This is the same as the main example except it pre-selects a payment type.
+ ****************************************************************
+ */
 app.get('/type/:payment_type', async (req, res) => {
   const { payment_type } = req.params;
   showTestPage(req, res, { payment_type })
+})
+
+/*
+ ****************************************************************
+ * GET /double
+ *
+ * This is an example where there are two <komoju-fields> tags under one form element.
+ * This is similar to how WooCommerce works, so we want to test that this kind of setup
+ * works.
+ ****************************************************************
+ */
+app.get('/double', async (req, res) => {
+  showTestPage(req, res, { template: 'double' })
 })
 
 app.get('/easy', async (_req, res) => {

@@ -88,4 +88,18 @@ describe('KOMOJU Fields: Credit Card', () => {
     cy.get('komoju-fields').shadow().contains('Required').should('not.exist');
     cy.get('komoju-fields').shadow().contains('必須項目です').should('exist');
   });
+
+  it('works even when another <komoju-fields> element is present', () => {
+    cy.visit('/double');
+    cy.get('#visible-select').select('Credit Card');
+
+    cy.get('komoju-fields').shadow().find('#cc-name').type('John Doe');
+    cy.get('komoju-fields').shadow().find('#cc-number').type('4242424242424242');
+    cy.get('komoju-fields').shadow().find('#cc-exp').type('1299');
+    cy.get('komoju-fields').shadow().find('#cc-cvc').type('111');
+    cy.contains('Pay').click();
+
+    cy.contains('Thanks for your payment').should('exist');
+    cy.contains('Payment status: captured').should('exist');
+  });
 });

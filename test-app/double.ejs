@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KOMOJU Fields example: multiple komoju-fields in one page</title>
+  <link rel="icon" type="image/x-icon" href="https://en.komoju.com/wp-content/uploads/2021/04/5fac5839c59681caee17bdf2_Favicon-Black.png">
+
+  <!-- Include the fields.js script. -->
+  <script type="module" src="/fields.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <form id="form">
+    <script>window.komojuFieldsDebug = true</script>
+
+    <!-- Pick which one is displayed -->
+    <select id="visible-select" onchange="changeVisible(event)">
+      <option value="credit-card-fields" selected>Credit Card</option>
+      <option value="konbini-fields">Konbini</option>
+    </select>
+    <script>
+      function changeVisible(event) {
+        const fieldset = document.getElementById(event.target.value);
+        document.querySelectorAll('fieldset').forEach((fields) => {
+          fields.style.display = 'none';
+        });
+        fieldset.style.display = 'block';
+      }
+    </script>
+
+    <fieldset id="credit-card-fields">
+      <legend>Credit Card</legend>
+      <!-- Credit card fields -->
+      <komoju-fields
+        session-id="<%= session.id %>"
+        publishable-key="<%= publishableKey %>"
+        komoju-cdn="<%= cdn %>"
+        komoju-api="<%= api %>"
+        payment-type="credit_card"
+      ></komoju-fields>
+    </fieldset>
+
+    <fieldset id="konbini-fields" style="display: none">
+      <legend>Konbini</legend>
+      <!-- Konbini fields in same form -->
+      <komoju-fields
+        session-id="<%= session.id %>"
+        publishable-key="<%= publishableKey %>"
+        komoju-cdn="<%= cdn %>"
+        komoju-api="<%= api %>"
+        payment-type="konbini"
+      ></komoju-fields>
+    </fieldset>
+
+    <!-- The komoju-input element will automatically take over the parent form submit logic. -->
+    <button type="submit">Pay</button>
+  </form>
+</body>
+</html>
