@@ -35,7 +35,7 @@ jobs:
       uses: actions/upload-artifact@v3
       with:
         name: videos
-        path: tests/cypress/videos/
+        path: cypress/videos/
         retention-days: 2
 
   typecheck:
