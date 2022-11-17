@@ -30,6 +30,13 @@ jobs:
     - run: bin/build.sh
     - name: Run Cypress tests
       run: bin/test-app.sh & bin/test.sh
+    - name: Upload screenshots
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: screenshots
+        path: cypress/screenshots/
+        retention-days: 15
     - name: Upload video
       if: failure()
       uses: actions/upload-artifact@v3
