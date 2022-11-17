@@ -101,9 +101,21 @@ app.get('/easy', async (_req, res) => {
  * Dummy handler for return_url. It's a basic "thanks for your payment" page.
  ****************************************************************
  */
-app.get('/paymentcomplete', async (_req, res) => {
-  res.set('content-type', 'text/html')
-  res.send('<h1>Thanks for your payment!</h1>')
+app.get('/paymentcomplete', async (req, res) => {
+  const sessionId = req.query['session_id'];
+
+  const komojuSessionResponse = await fetch(`${KOMOJU_API_URL}/api/v1/sessions/${sessionId}`, {
+    method: 'GET',
+    headers: komojuHeaders(),
+  })
+  const session = await komojuSessionResponse.json()
+
+  res.render('thanks', {
+    session,
+    publishableKey: KOMOJU_PUBLISHABLE_KEY,
+    cdn: testappUrl(req, '/'),
+    api: KOMOJU_API_URL,
+  })
 });
 
 function komojuHeaders() {

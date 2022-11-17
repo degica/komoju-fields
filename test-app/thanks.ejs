@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KOMOJU Fields example - payment complete</title>
+  <link rel="icon" type="image/x-icon" href="https://en.komoju.com/wp-content/uploads/2021/04/5fac5839c59681caee17bdf2_Favicon-Black.png">
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <h1>Thanks for your payment!</h1>
+
+  <script>
+    window.session = <%= JSON.stringify(session) %>;
+  </script>
+
+  <ul>
+    <li><a href="<%= session.session_url %>">Payment status: <%= session.payment.status %></a></li>
+    <li><a href="/">Make another one</a></li>
+  </ul>
+</body>
+</html>

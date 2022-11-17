@@ -94,7 +94,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   // We start by just showing a spinner.
   constructor() {
     super();
-    const root = this.attachShadow({mode: 'open'});
+    const root = this.attachShadow({mode: window.komojuFieldsDebug ? 'open' : 'closed'});
     root.innerHTML = spinner;
   }
 
