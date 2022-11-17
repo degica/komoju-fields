@@ -4,7 +4,7 @@ import { runValidation } from './shared/validation'
 import KomojuI18nElement from './shared/komoju-i18n-element';
 
 // Language gets stored in here, mostly controlled by <komoju-fields>.
-declare let window: WindowWithKomojuTranslations;
+declare let window: WindowWithKomojuGlobals;
 
 export default class KomojuFieldsElement extends HTMLElement implements KomojuFieldsConfig {
   static get observedAttributes() {

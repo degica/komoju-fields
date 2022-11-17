@@ -1,6 +1,6 @@
 import '../types.d'
 
-declare let window: WindowWithKomojuTranslations;
+declare let window: WindowWithKomojuGlobals;
 
 // Call this to add messages to the registry.
 // Individual payment method modules can do this to add their own messages.

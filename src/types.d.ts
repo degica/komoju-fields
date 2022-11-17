@@ -46,7 +46,7 @@ type KomojuPaymentDetailsFunction = (root: ShadowRoot, paymentMethod: KomojuPaym
 type I18n = { [index: string]: any };
 
 // Extension of the global window object with komojuTranslations for use by <komoju-i18n> elements.
-interface WindowWithKomojuTranslations extends Window {
+interface WindowWithKomojuGlobals extends Window {
   komojuFieldsDebug: boolean,
   komojuTranslations: I18n,
   komojuLanguage: string,

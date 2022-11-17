@@ -1,7 +1,7 @@
 import '../types.d'
 
 // Language gets stored in here, mostly controlled by <komoju-fields>.
-declare let window: WindowWithKomojuTranslations;
+declare let window: WindowWithKomojuGlobals;
 
 // This is a <komoju-i18n> element that we use internally for displaying translated text
 export default class KomojuI18nElement extends HTMLElement {
