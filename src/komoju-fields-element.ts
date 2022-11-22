@@ -160,6 +160,9 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       const renderI18n = (el: Element) => (el as KomojuI18nElement).render();
 
       document.querySelectorAll('komoju-i18n').forEach(renderI18n);
+      document.querySelectorAll('komoju-picker').forEach(picker =>
+        picker.shadowRoot?.querySelectorAll('komoju-i18n').forEach(renderI18n)
+      );
       if (!this.shadowRoot) return;
       this.shadowRoot.querySelectorAll('komoju-i18n').forEach(renderI18n);
     }

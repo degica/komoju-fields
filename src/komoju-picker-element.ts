@@ -26,7 +26,7 @@ export default class KomojuPickerElement extends HTMLElement {
 
   constructor() {
     super();
-    const root = this.attachShadow({mode: window.komojuFieldsDebug ? 'open' : 'closed'});
+    const root = this.attachShadow({ mode: 'open' });
     root.innerHTML = template;
   }
 
