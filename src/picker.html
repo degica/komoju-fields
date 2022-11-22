@@ -1,0 +1,32 @@
+<template id="radio-template">
+  <label class="radio">
+    <input type="radio" name="payment-type">
+    <img class="picker-icon">
+    <komoju-i18n></komoju-i18n>
+  </label>
+</template>
+
+<div id="picker">
+</div>
+
+<style>
+  #picker {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+    justify-content: space-between;
+  }
+
+  .radio {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 12px;
+  }
+
+  img {
+    width: 42px;
+  }
+</style>

@@ -18,7 +18,17 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
 
   // 'session' is also an attribute. Set the 'session' attribute to a stringified JSON of
   // the entire KOMOJU sesion to skip having to fetch it from KOMOJU again.
-  session: KomojuSession | null = null
+  _session: KomojuSession | null = null
+  get session() {
+    return this._session;
+  }
+  set session(value) {
+    this._session = value;
+    this.dispatchEvent(new CustomEvent('komoju-session-change', {
+      detail: { session: this._session }, bubbles: true, composed: true, cancelable: false
+    }));
+  }
+
   module: {
     render: KomojuRenderFunction,
     paymentDetails: KomojuPaymentDetailsFunction
@@ -89,6 +99,10 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   }
   set locale(value) {
     this.setAttribute('locale', value ?? '');
+  }
+
+  get paymentMethod() {
+    return this.session?.payment_methods.find(method => method.type === this.paymentType);
   }
 
   // We start by just showing a spinner.
@@ -263,7 +277,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   }
 
   // fetch wrapper with KOMOJU authentication already handled.
-  private komojuFetch(method: 'GET' | 'POST', path: string, body?: object): Promise<Response> {
+  komojuFetch(method: 'GET' | 'POST', path: string, body?: object): Promise<Response> {
     return fetch(`${this.komojuApi}${path}`, {
       method,
       headers: {

@@ -14,9 +14,10 @@ interface KomojuPaymentMethod {
   currency?: string,
   exchange_rate?: number,
   offsite?: boolean,
-  additional_fields?: [string]
+  additional_fields?: Array<string>
 }
 
+// This is the response to /api/v1/sessions
 interface KomojuSession {
   id: string,
   resource: 'session',
@@ -26,23 +27,37 @@ interface KomojuSession {
   session_url: string,
   return_url: string,
   default_locale: string,
-  payment_methods: [KomojuPaymentMethod],
+  payment_methods: Array<KomojuPaymentMethod>,
   created_at: string,
   cancelled_at: string,
   completed_at: string,
   status: 'pending' | 'completed'  | 'cancelled',
 }
 
+// This is the response to /api/v1/payment_methods
+interface KomojuPaymentMethodMeta {
+  name_en: string,
+  name_ja: string,
+  name_ko: string,
+  type_slug: string,
+  currency: string,
+  subtypes?: Array<string>,
+}
+
+// This is the response to /api/v1/sessions/:id/pay
 interface KomojuPayResult {
   status: 'pending' | 'completed' | 'error',
   error?: string | { code: string, details: object, message: string, param: string | null },
   redirect_url?: string,
 }
 
+// Every individual payment method module has this "render function" and "payment_details function".
 type KomojuRenderFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => void;
+// The payment_details function is used for submitting payment to KOMOJU. It's the same format as
+// /api/v1/payments payment_details.
 type KomojuPaymentDetailsFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => object;
 
-// These i18n types will catch invalid keys and missing translations.
+// Translated messages are just a map of message keys to translated strings.
 type I18n = { [index: string]: any };
 
 // Extension of the global window object with komojuTranslations for use by <komoju-i18n> elements.
@@ -57,11 +72,20 @@ interface WindowWithKomojuGlobals extends Window {
 interface KomojuFieldsConfig extends HTMLElement {
   komojuCdn: string,
   komojuApi: string,
+  paymentType: string | null,
+  session: KomojuSession | null,
+  komojuFetch(method: 'GET' | 'POST', path: string, body?: object): Promise<Response>,
 }
 
 interface KomojuI18nElement extends HTMLElement {
   key: string | null,
   render(): void,
+}
+
+interface KomojuSessionChangeEvent extends CustomEvent {
+  detail: {
+    session: KomojuSession
+  }
 }
 
 declare module '*.html' {

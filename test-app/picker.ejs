@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>KOMOJU Fields + picker example</title>
+  <link rel="icon" type="image/x-icon" href="https://en.komoju.com/wp-content/uploads/2021/04/5fac5839c59681caee17bdf2_Favicon-Black.png">
+
+  <!-- Include the fields.js script. -->
+  <script type="module" src="/fields.js"></script>
+
+  <style>
+    body {
+      font-family: sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <form id="form">
+    <!-- For testing locale attribute: -->
+    <select id="locale-select" onchange="changeLocale(event)">
+      <option value="en">English</option>
+      <option value="ja">Japanese</option>
+    </select>
+    <script>
+      function changeLocale(event) {
+        const fields = document.querySelector('komoju-fields');
+        fields.locale = event.target.value;
+      }
+    </script>
+
+    <script>window.komojuFieldsDebug = true</script>
+
+    <!-- Optional picker. Most EC sites already have a picker, but this might help some. -->
+    <komoju-picker></komoju-picker>
+
+    <!-- Payment input fields. Contents are dynamic based on the Session's payment types. -->
+    <komoju-fields
+      session="<%= sessionString %>"
+      session-id="<%= session.id %>"
+      publishable-key="<%= publishableKey %>"
+      komoju-cdn="<%= cdn %>"
+      komoju-api="<%= api %>"
+      payment-type="<%= payment_type ?? 'credit_card' %>"
+    ></komoju-fields>
+
+    <!-- The komoju-input element will automatically take over the parent form submit logic. -->
+    <button type="submit">Pay</button>
+  </form>
+</body>
+</html>

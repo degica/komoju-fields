@@ -1,5 +1,6 @@
 import './types.d';
 import KomojuFieldsElement from './komoju-fields-element';
+import KomojuPickerElement from './komoju-picker-element';
 import KomojuErrorElement from './shared/komoju-error-element';
 import KomojuI18nElement from './shared/komoju-i18n-element';
 import KomojuFadeElement from './shared/komoju-fade-element';
@@ -11,6 +12,7 @@ window.komojuTranslations = { 'en': {}, 'ja': {} };
 
 // Public custom elements
 window.customElements.define('komoju-fields', KomojuFieldsElement);
+window.customElements.define('komoju-picker', KomojuPickerElement);
 
 // "Internal" custom elements
 window.customElements.define('komoju-error', KomojuErrorElement);

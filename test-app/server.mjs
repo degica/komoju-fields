@@ -81,6 +81,17 @@ app.get('/', async (req, res) => {
 
 /*
  ****************************************************************
+ * GET /picker
+ *
+ * Similar to the main example except it uses our payment type picker.
+ ****************************************************************
+ */
+app.get('/picker', async (req, res) => {
+  showTestPage(req, res, { template: 'picker' })
+})
+
+/*
+ ****************************************************************
  * GET /type/:payment_type
  *
  * This is the same as the main example except it pre-selects a payment type.
