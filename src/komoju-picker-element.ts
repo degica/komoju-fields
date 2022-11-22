@@ -1,6 +1,7 @@
 import './types.d';
 import template from './picker.html';
 import { registerMessages } from './shared/translations';
+import supportedPaymentTypes from './generated/supported-payment-types';
 
 declare let window: WindowWithKomojuGlobals;
 
@@ -73,6 +74,8 @@ export default class KomojuPickerElement extends HTMLElement {
 
     let i = 0;
     for (const paymentMethod of fields.session.payment_methods) {
+      if (!supportedPaymentTypes.has(paymentMethod.type)) continue;
+
       const radio = template.content.cloneNode(true) as HTMLElement;
       const input = radio.querySelector('input') as HTMLInputElement;
       const icon = radio.querySelector('img') as HTMLImageElement;

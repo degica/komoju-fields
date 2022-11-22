@@ -10,6 +10,9 @@ set -e
 
 ESBUILD="npx esbuild --bundle --target=firefox100 --format=esm --loader:.html=text"
 
+# Generate dynamic source files
+bin/generate.sh
+
 # Build the main bundle
 $ESBUILD src/index.ts --outfile=dist/fields.js &
 
