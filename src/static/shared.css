@@ -24,7 +24,7 @@ input {
   transition: color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 
-.invalid {
+label input.invalid {
   border-color: var(--invalid-color);
   color: var(--invalid-color);
 }

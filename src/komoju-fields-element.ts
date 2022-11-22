@@ -13,6 +13,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       'session-id',
       'payment-type',
       'locale',
+      'theme',
     ];
   }
 
@@ -101,6 +102,15 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     this.setAttribute('locale', value ?? '');
   }
 
+  // Attribute: theme
+  // CSS file to use as a theme.
+  get theme() {
+    return this.getAttribute('theme');
+  }
+  set theme(value) {
+    this.setAttribute('theme', value ?? '');
+  }
+
   get paymentMethod() {
     return this.session?.payment_methods.find(method => method.type === this.paymentType);
   }
@@ -165,6 +175,11 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       );
       if (!this.shadowRoot) return;
       this.shadowRoot.querySelectorAll('komoju-i18n').forEach(renderI18n);
+    }
+    else if (name === 'theme') {
+      if (!this.shadowRoot) return;
+      this.shadowRoot.querySelectorAll('#theme').forEach(link => link.remove());
+      this.applyTheme(newValue);
     }
   }
 
@@ -277,6 +292,18 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     link.rel = 'stylesheet';
     link.href = `${this.komojuCdn}/static/shared.css`;
     this.shadowRoot.prepend(link);
+
+    // Add theme styles
+    this.applyTheme(this.theme);
+  }
+
+  applyTheme(urlToCSS: string | null) {
+    if (!urlToCSS || urlToCSS == '') return;
+    const link = document.createElement('link');
+    link.id = 'theme';
+    link.rel = 'stylesheet';
+    link.href = urlToCSS;
+    this.shadowRoot?.append(link);
   }
 
   // fetch wrapper with KOMOJU authentication already handled.

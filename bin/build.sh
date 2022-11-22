@@ -22,9 +22,7 @@ for module in $(ls src/fields/*/module.ts); do
 done
 
 # Copy over static assets
-mkdir -p dist/static
-for asset in $(ls src/static/*); do
-  cp "$asset" $(echo "$asset" | sed 's/src/dist/') &
-done
+rm -rf dist/static
+cp -r src/static dist/static
 
 wait $(jobs -p)
