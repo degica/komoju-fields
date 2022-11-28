@@ -242,7 +242,6 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     this.startFade();
     const paymentDetails = this.module.paymentDetails(this.shadowRoot, paymentMethod);
     const payResponse = await this.komojuFetch('POST', `/api/v1/sessions/${this.session.id}/pay`, {
-      // TODO: supply fraud_details too
       payment_details: paymentDetails
     });
     const payResult = await payResponse.json() as KomojuPayResult;
