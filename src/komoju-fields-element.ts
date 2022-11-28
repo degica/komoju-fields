@@ -190,7 +190,8 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     while (parent && parent.tagName !== 'FORM') {
       parent = parent.parentElement;
     }
-    // This is optional - implementers may call submit() manually.
+    // It's OK if we can't find a parent form tag.
+    // Implementers can call submit() manually on this element.
     if (!parent) return;
 
     // Call this.submit on form submit.
