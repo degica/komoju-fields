@@ -1,4 +1,5 @@
 import '../../types.d'
+import KomojuFieldIconElement from './komoju-field-icon-element';
 import html from './template.html'
 import { convertNumbersToHalfWidth } from '../../shared/char-width-utils';
 import { addValidation } from '../../shared/validation';
@@ -13,6 +14,8 @@ import {
 import { registerMessages } from '../../shared/translations';
 import * as i18n from './i18n';
 registerMessages(i18n);
+
+window.customElements.define('komoju-field-icon', KomojuFieldIconElement);
 
 export const render: KomojuRenderFunction = (root, _paymentMethod) => {
   root.innerHTML = html;
@@ -37,12 +40,18 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
     return null;
   });
 
-  // Credit card number
-  const number = document.getElementById('cc-number')! as HTMLInputElement;
-  const defaultCardImage = `url(${config.komojuCdn}/static/credit_card_number.svg)`
-  number.style.backgroundImage = defaultCardImage;
+  // Card number icon
+  const cardIcon = document.getElementById('cc-icon')! as KomojuFieldIconElement;
+  const defaultCardImage = `${config.komojuCdn}/static/credit_card_number.svg`;
+
+  // TODO: get brands from config
+  const supportedBrandImages = ['visa', 'master', 'jcb'].map((brand) => {
+    return `https://komoju.com/payment_methods/credit_card.svg?brands=${brand}`;
+  }).join(' ');
+  cardIcon.icon = supportedBrandImages;
 
   // Card number format: 1234 5678 9012 3456 (sometimes more or less digits)
+  const number = document.getElementById('cc-number')! as HTMLInputElement;
   number.addEventListener('input', (event) => {
     const input = event.target as HTMLInputElement;
     if (input.dataset.ime === 'active') return;
@@ -56,9 +65,18 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
     input.value = formatCardNumber(value, type);
     input.dataset.brand = type;
 
+    // Update the card icons based on detected brand
     const brand = cardTypeToKomojuSubtype(type);
-    input.style.backgroundImage = type === 'unknown' ?  defaultCardImage :
-      `url(https://komoju.com/payment_methods/credit_card.svg?brands=${brand})`;
+    if (type === 'unknown') {
+      if (value.length < 2) {
+        cardIcon.icon = supportedBrandImages;
+      } else {
+        cardIcon.icon = defaultCardImage;
+      }
+    }
+    else {
+      cardIcon.icon = `https://komoju.com/payment_methods/credit_card.svg?brands=${brand}`;
+    }
   });
 
   // Card number validation: luhn check
@@ -151,10 +169,11 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
 
   // CVC
   // Here we just want to set the helper image.
-  const cvc = document.getElementById('cc-cvc')! as HTMLInputElement;
-  cvc.style.backgroundImage = `url(${config.komojuCdn}/static/credit_card_cvc.svg)`;
+  const cvcIcon = document.getElementById('cc-cvc-icon')! as KomojuFieldIconElement;
+  cvcIcon.icon = `${config.komojuCdn}/static/credit_card_cvc.svg`;
 
   // CVC validation: just make sure it's not empty
+  const cvc = document.getElementById('cc-cvc')! as HTMLInputElement;
   addValidation(i18n, cvc, (input) => {
     if (input.value === '') return 'cc.error.required';
     return null;

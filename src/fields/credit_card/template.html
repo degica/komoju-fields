@@ -7,6 +7,8 @@
   <label class="field field-number">
     <komoju-i18n key="cc.label.card-number"></komoju-i18n>
     <input id="cc-number" autocomplete="cc-number" placeholder="1234 1234 1234 1234" required>
+    <komoju-field-icon id="cc-icon" for="cc-number">
+    </komoju-field-icon>
   </label>
 
   <label class="field field-exp">
@@ -23,6 +25,8 @@
   <label class="field field-cvc">
     <komoju-i18n key="cc.label.cvc"></komoju-i18n>
     <input id="cc-cvc" autocomplete="cc-csc" maxlength="10" placeholder="123" required>
+    <komoju-field-icon id="cc-cvc-icon" for="cc-cvc">
+    </komoju-field-icon>
   </label>
 </div>
 
@@ -42,8 +46,7 @@
     width: 49%;
   }
 
-  #cc-number,#cc-cvc {
-    padding-right: 2.5rem;
+  #cc-cvc {
     background-repeat: no-repeat;
     background-position-x: right;
     background-size: contain;
