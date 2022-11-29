@@ -15,10 +15,10 @@ describe('KOMOJU Fields: Konbini', () => {
     cy.get('komoju-fields').shadow().contains('FamilyMart').click();
     cy.contains('Pay').click();
 
-    // TODO: actually we're supposed to be on KOMOJU's hosted page right now to see payment instructions.
-    // should click "return to merchant".
+    cy.contains('How to make a payment at Family Mart').should('exist');
+    cy.contains('Return to').click();
 
-    cy.contains('Thanks for your payment').should('exist');
+    cy.contains('Thanks for your payment!').should('exist');
     cy.contains('Payment status: authorized').should('exist');
   });
 
@@ -31,7 +31,10 @@ describe('KOMOJU Fields: Konbini', () => {
     cy.get('komoju-fields').shadow().contains('Lawson').click();
     cy.contains('Pay').click();
 
-    cy.contains('Thanks for your payment').should('exist');
+    cy.contains('How to make a payment at Lawson').should('exist');
+    cy.contains('Return to').click();
+
+    cy.contains('Thanks for your payment!').should('exist');
     cy.contains('Payment status: authorized').should('exist');
   });
 });
