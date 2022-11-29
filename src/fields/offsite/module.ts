@@ -1,3 +1,5 @@
+import '../../types.d';
+// @ts-ignore
 import html from './template.html';
 import { addValidation } from '../../shared/validation';
 

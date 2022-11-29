@@ -1,3 +1,4 @@
+// @ts-ignore
 import html from './komoju-field-icon.html'
 
 // This <komoju-field-icon> element is only used for credit card.
