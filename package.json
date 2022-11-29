@@ -8,7 +8,8 @@
     "build": "bin/build.sh",
     "watch": "bin/watch.sh",
     "test": "bin/test.sh",
-    "test-app": "bin/test-app.sh"
+    "test-app": "bin/test-app.sh",
+    "dev": "bin/dev.sh"
   },
   "repository": {
     "type": "git",
@@ -21,10 +22,8 @@
   },
   "homepage": "https://github.com/degica/komoju-fields#readme",
   "devDependencies": {
+    "cypress": "^11.0.1",
     "esbuild": "^0.15.13",
     "typescript": "^4.8.4"
-  },
-  "dependencies": {
-    "cypress": "^11.0.1"
   }
 }
