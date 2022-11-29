@@ -127,6 +127,10 @@ npm install
 
 # To start the server with auto-build:
 bin/dev.sh # equivalent to running both bin/test-app.sh and bin/watch.sh
+
+# If you want to use your system's esbuild, run:
+ESBUILD=esbuild bin/dev.sh
+# (by default it uses `npx esbuild` where 99% of the time is spent in `npx`!)
 ```
 
 http://localhost:3000/ <- demo page that fetches a new session from KOMOJU
