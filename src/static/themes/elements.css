@@ -1,5 +1,50 @@
+.fields {
+  --invalid-color: #df1b41;
+}
+
 .konbini {
-  background: red; /* TODO */
+  justify-content: flex-start;
+}
+
+.radio {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  border-radius: 5px;
+  border: 1px solid rgba(10, 10, 10, 0.12);
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.03), 0px 3px 6px rgba(0, 0, 0, 0.02);
+
+  color: #30313d;
+  font-weight: 500;
+  font-size: 0.875rem;
+
+  width: 11.25rem;
+  padding: 0.75rem;
+  gap: 2px;
+  margin-bottom: 12px;
+  margin-right: 12px;
+
+  cursor: pointer;
+
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.radio input {
+  position: absolute;
+  opacity: 0;
+}
+
+.radio:hover {
+  background-color: rgb(250, 250, 250);
+}
+
+.radio:active {
+  background-color: rgb(240, 240, 240);
+}
+
+.radio.checked {
+  border-color: #0570de;
 }
 
 .field {

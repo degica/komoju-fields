@@ -42,11 +42,20 @@ function initializeInputs(
     input.value = brand;
     if (!checked) {
       input.checked = true;
+      input.parentElement!.classList.add('checked');
       checked = true;
     }
 
     image.src = `${config.komojuApi}${paymentMethod.brands[brand].icon}`;
     label.key = `kb.store.${brand}`;
+
+    // Add .checked to the parent .radio element when the input is checked.
+    // This is just to make the CSS a little easier, since we're putting the
+    // input inside of the label.
+    input.addEventListener('change', () => {
+      document.querySelectorAll('.radio.checked').forEach((el) => el.classList.remove('checked'));
+      input.parentElement!.classList.add('checked');
+    });
 
     radioTemplate.parentElement!.appendChild(element);
   }
