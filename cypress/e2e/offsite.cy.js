@@ -18,7 +18,7 @@ describe('KOMOJU Fields: Offsites', () => {
   it('renders no fields for PayPay', () => {
     cy.visit('/type/paypay');
 
-    cy.wait(100);
+    cy.wait(1000);
     cy.get('komoju-fields').shadow().find('input').should('not.exist');
 
     cy.contains('Pay').click();
