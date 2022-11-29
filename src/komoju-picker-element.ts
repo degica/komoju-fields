@@ -1,4 +1,3 @@
-import './types.d';
 import template from './picker.html';
 import { setupRadioParentCheckedClass } from './shared/radio-helpers';
 import { registerMessages } from './shared/translations';

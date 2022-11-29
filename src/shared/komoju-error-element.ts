@@ -1,5 +1,3 @@
-import '../types.d'
-
 // This is a <komoju-error> error tag we use internally for displaying validation errors.
 // End users are not expected to use this.
 export default class KomojuErrorElement extends HTMLElement {

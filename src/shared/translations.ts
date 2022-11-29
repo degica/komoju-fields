@@ -1,5 +1,3 @@
-import '../types.d'
-
 declare let window: WindowWithKomojuGlobals;
 
 // Call this to add messages to the registry.

@@ -1,5 +1,3 @@
-import '../types.d'
-
 // Language gets stored in here, mostly controlled by <komoju-fields>.
 declare let window: WindowWithKomojuGlobals;
 

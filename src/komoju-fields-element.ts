@@ -1,4 +1,3 @@
-import './types.d'
 import spinner from './spinner.html'
 import { runValidation } from './shared/validation'
 import KomojuI18nElement from './shared/komoju-i18n-element';

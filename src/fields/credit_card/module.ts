@@ -1,4 +1,3 @@
-import '../../types.d'
 import KomojuFieldIconElement from './komoju-field-icon-element';
 import html from './template.html'
 import { convertNumbersToHalfWidth } from '../../shared/char-width-utils';

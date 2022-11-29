@@ -1,5 +1,3 @@
-import '../types.d';
-
 type ValidationCallback = (input: HTMLInputElement) => string | null;
 
 // Adds validation to an input element.

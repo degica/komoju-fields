@@ -1,5 +1,3 @@
-import '../types.d'
-
 // This is <komoju-fade>. It's used internally to fade out the fields temporarily during submit.
 // This prevents double submits and also signals to the user that something is happening.
 //
