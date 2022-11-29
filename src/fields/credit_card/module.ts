@@ -68,7 +68,8 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
     // Update the card icons based on detected brand
     const brand = cardTypeToKomojuSubtype(type);
     if (type === 'unknown') {
-      if (value.length < 2) {
+      // Most brands are identifiable after 3 characters
+      if (value.length < 3) {
         cardIcon.icon = supportedBrandImages;
       } else {
         cardIcon.icon = defaultCardImage;
