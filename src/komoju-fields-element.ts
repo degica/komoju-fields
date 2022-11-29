@@ -122,7 +122,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   }
 
   // Reactive attribute handling. When session or payment type is changed, we want to re-render.
-  attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
+  async attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
     if (name === 'session') {
       if (!newValue || newValue == '') return;
 
@@ -159,8 +159,15 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       if (!newValue || newValue == '') return;
       if (!this.session) return;
 
-      if (this.shadowRoot) this.shadowRoot.innerHTML = spinner;
-      this.render();
+      let done = false;
+      // Showing spinner right away is ugly when the payment method loads
+      // fast, so we only show spinner if it takes more than 100ms.
+      setTimeout(
+        () => { if (!done) this.shadowRoot!.innerHTML = spinner },
+        100
+      );
+      await this.render();
+      done = true;
     }
     else if (name === 'locale') {
       if (!newValue || newValue == '') return;
