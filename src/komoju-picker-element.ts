@@ -1,5 +1,6 @@
 import './types.d';
 import template from './picker.html';
+import { setupRadioParentCheckedClass } from './shared/radio-helpers';
 import { registerMessages } from './shared/translations';
 import supportedPaymentTypes from './generated/supported-payment-types';
 
@@ -14,6 +15,15 @@ export default class KomojuPickerElement extends HTMLElement {
   }
   set fields(value) {
     this.setAttribute('fields', value ?? '');
+  }
+
+  // Attribute: theme
+  // CSS file to use as a theme.
+  get theme() {
+    return this.getAttribute('theme');
+  }
+  set theme(value) {
+    this.setAttribute('theme', value ?? '');
   }
 
   komojuPaymentMethods?: Array<KomojuPaymentMethodMeta>
@@ -63,9 +73,10 @@ export default class KomojuPickerElement extends HTMLElement {
 
   render(fields: KomojuFieldsConfig) {
     if (!fields.session) return;
+    if (!this.shadowRoot) return;
 
-    const picker = this.shadowRoot?.getElementById('picker');
-    const template = this.shadowRoot?.getElementById('radio-template') as HTMLTemplateElement;
+    const picker = this.shadowRoot.getElementById('picker');
+    const template = this.shadowRoot.getElementById('radio-template') as HTMLTemplateElement;
     if (!picker) throw new Error('KOMOJU Fields bug: <komoju-picker> wrong shadow DOM (no picker)');
     if (!template) throw new Error('KOMOJU Fields bug: <komoju-picker> wrong shadow DOM (no template)');
 
@@ -87,6 +98,7 @@ export default class KomojuPickerElement extends HTMLElement {
       input.addEventListener('change', () => {
         fields.paymentType = paymentMethod.type;
       });
+      setupRadioParentCheckedClass(input, this.shadowRoot);
 
       icon.src = `${fields.komojuApi}/payment_methods/${paymentMethod.type}.svg`;
       text.key = paymentMethod.type;
@@ -95,6 +107,15 @@ export default class KomojuPickerElement extends HTMLElement {
 
       i += 1;
     }
+
+    const theme = this.theme ?? fields.theme;
+    if (!theme || theme == '') return;
+    this.shadowRoot.querySelectorAll('#theme').forEach(link => link.remove());
+    const link = document.createElement('link');
+    link.id = 'theme';
+    link.rel = 'stylesheet';
+    link.href = theme;
+    this.shadowRoot.append(link);
   }
 
   // To keep things dynamic, we pull payment method translations from KOMOJU.

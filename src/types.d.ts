@@ -70,6 +70,7 @@ interface WindowWithKomojuGlobals extends Window {
 // Individual payment methods will access certain attributes of the main <komoju-fields> element.
 // This interface defines those attributes.
 interface KomojuFieldsConfig extends HTMLElement {
+  theme: string | null,
   komojuCdn: string,
   komojuApi: string,
   paymentType: string | null,

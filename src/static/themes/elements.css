@@ -2,7 +2,7 @@
   --invalid-color: #df1b41;
 }
 
-.konbini {
+.konbini,#picker {
   justify-content: flex-start;
 }
 
@@ -28,6 +28,10 @@
   cursor: pointer;
 
   transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+#picker .radio {
+  width: 9rem;
 }
 
 .radio input {
