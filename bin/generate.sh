@@ -18,7 +18,7 @@ echo '// List of supported payment types comes from the folders in src/fields/*.
 echo '// To add a new one, simply add a new folder.'                              >> $file
 echo >> $file
 echo 'const supported: Set<string> = new Set();'                                  >> $file
-supported_payment_types=$(/bin/ls src/fields)
+supported_payment_types=$(/bin/ls src/fields | sort)
 for payment_type in $supported_payment_types; do
   echo "supported.add('$payment_type');"                                          >> $file
 done

@@ -280,7 +280,8 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     const paymentMethod = this.session.payment_methods.find(method => method.type === this.paymentType);
     if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
 
-    this.module = await import(`${this.komojuCdn}/fields/${this.paymentType}/module.js`);
+    const moduleName = paymentMethod.offsite ? 'offsite' : paymentMethod.type;
+    this.module = await import(`${this.komojuCdn}/fields/${moduleName}/module.js`);
     if (!this.module) throw new Error(`KOMOJU Payment module not found: ${this.paymentType}`);
 
     if (!this.shadowRoot) throw new Error('KOMOJU Fields element has no shadow root (internal bug)');

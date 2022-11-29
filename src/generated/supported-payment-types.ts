@@ -6,4 +6,5 @@
 const supported: Set<string> = new Set();
 supported.add('credit_card');
 supported.add('konbini');
+supported.add('offsite');
 export default supported;

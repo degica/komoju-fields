@@ -46,7 +46,15 @@ async function showTestPage(req, res, options) {
       payment_data: {
         external_order_num: `order-${Math.floor(Math.random() * 1000000000)}`,
       },
-      payment_types: ['credit_card', 'bank_transfer', 'konbini', 'paypay', 'aupay'],
+      payment_types: [
+        'credit_card',
+        'bank_transfer',
+        'konbini',
+        'paypay',
+        'aupay',
+        'alipay',
+        'giropay',
+      ],
       return_url: testappUrl(req, '/paymentcomplete'),
     })
   })

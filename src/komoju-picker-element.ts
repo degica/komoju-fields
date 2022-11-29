@@ -84,7 +84,10 @@ export default class KomojuPickerElement extends HTMLElement {
 
     let i = 0;
     for (const paymentMethod of fields.session.payment_methods) {
-      if (!supportedPaymentTypes.has(paymentMethod.type)) continue;
+      const module = paymentMethod.offsite ? 'offsite' : paymentMethod.type;
+      if (!supportedPaymentTypes.has(module)) {
+        continue;
+      }
 
       const radio = template.content.cloneNode(true) as HTMLElement;
       const input = radio.querySelector('input') as HTMLInputElement;
