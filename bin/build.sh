@@ -11,6 +11,9 @@ set -e
 ESBUILD=${ESBUILD:-"npx esbuild"}
 ESBUILD_ARGS="--bundle --target=firefox100 --format=esm --loader:.html=text"
 
+rm -rf dist
+mkdir -p dist
+
 # Generate dynamic source files
 bin/generate.sh
 
@@ -23,7 +26,6 @@ for module in $(ls src/fields/*/module.ts); do
 done
 
 # Copy over static assets
-rm -rf dist/static
 cp -r src/static dist/static
 
 wait $(jobs -p)
