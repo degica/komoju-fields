@@ -16,12 +16,20 @@ registerMessages(i18n);
 
 window.customElements.define('komoju-field-icon', KomojuFieldIconElement);
 
-export const render: KomojuRenderFunction = (root, _paymentMethod) => {
+export const render: KomojuRenderFunction = (root, paymentMethod) => {
   root.innerHTML = html;
-  initializeInputs(root, root.host as KomojuFieldsConfig);
+  initializeInputs(
+    root,
+    paymentMethod as KomojuCreditCardPaymentMethod,
+    root.host as KomojuFieldsConfig,
+  );
 }
 
-function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig) {
+function initializeInputs(
+  document: DocumentFragment,
+  paymentMethod: KomojuCreditCardPaymentMethod,
+  config: KomojuFieldsConfig,
+) {
   // So, IME. We don't want to do auto-formatting while IME is active.
   document.querySelectorAll('input').forEach((input) => {
     input.addEventListener('compositionstart', () => {
@@ -42,9 +50,7 @@ function initializeInputs(document: DocumentFragment, config: KomojuFieldsConfig
   // Card number icon
   const cardIcon = document.getElementById('cc-icon')! as KomojuFieldIconElement;
   const defaultCardImage = `${config.komojuCdn}/static/credit_card_number.svg`;
-
-  // TODO: get brands from config
-  const supportedBrandImages = ['visa', 'master', 'jcb'].map((brand) => {
+  const supportedBrandImages = paymentMethod.brands.map((brand) => {
     return `https://komoju.com/payment_methods/credit_card.svg?brands=${brand}`;
   }).join(' ');
   cardIcon.icon = supportedBrandImages;
