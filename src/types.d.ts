@@ -1,3 +1,8 @@
+interface KomojuCreditCardPaymentMethod extends KomojuPaymentMethod {
+  type: 'konbini',
+  brands: string[],
+}
+
 interface KomojuKonbiniBrand {
   icon: string,
 }
