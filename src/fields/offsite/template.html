@@ -1,4 +1,7 @@
-<div class="fields">
+<div class="fields offsite">
+  <img class="offsite-qr-code">
+  <komoju-i18n class="qr-code-explanation" key="os.pay-with-qr"></komoju-i18n>
+
   <template id="additional-field">
     <label class="field">
       <komoju-i18n></komoju-i18n>
@@ -6,3 +9,20 @@
     </label>
   </template>
 </div>
+
+<style>
+  .offsite {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .offsite-qr-code {
+    width: 128px;
+    height: 128px;
+    border: 1px solid black;
+  }
+
+  .qr-code-explanation {
+    color: #8b99a7;
+  }
+</style>

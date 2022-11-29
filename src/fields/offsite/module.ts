@@ -8,12 +8,38 @@ import * as i18n from './i18n';
 registerMessages(i18n);
 
 export const render: KomojuRenderFunction = (root, paymentMethod) => {
+  const config = root.host as KomojuFieldsConfig;
   root.innerHTML = html;
 
   root.querySelectorAll('.fields').forEach((element) => {
     element.classList.add(paymentMethod.type);
   });
 
+  // Render QR code.
+  const qrImg = root.querySelector('.offsite-qr-code') as HTMLImageElement;
+  if (!config.session) {
+    throw new Error('KOMOJU Fields bug: offsite rendered without session?');
+  }
+  qrImg.src = `${config.session.session_url}/qr.svg`;
+
+  // Listen for external session completion.
+  const storage = root.querySelector('.offsite') as HTMLElement;
+  storage.dataset.interval = setInterval(async () => {
+    if (!config.session) return;
+    const response = await config.komojuFetch('GET', `/api/v1/sessions/${config.session.id}`);
+    const session = await response.json() as KomojuSession;
+
+    // Redirect right away if the session is complete.
+    if (session.status === 'completed') {
+      cleanup(root, paymentMethod);
+      const url = new URL(session.return_url);
+      url.searchParams.append('session_id', session.id);
+      window.location.href = url.toString();
+    }
+  }, 3000).toString();
+
+  // Render optional additional fields.
+  // The payment_method object tells us which fields are needed.
   const fieldTemplate = root.getElementById('additional-field')! as HTMLTemplateElement;
   for (const field of paymentMethod.additional_fields ?? []) {
     const element = fieldTemplate.content.cloneNode(true) as HTMLElement;
@@ -32,6 +58,16 @@ export const render: KomojuRenderFunction = (root, paymentMethod) => {
       if (input.value === '') return 'os.error.required';
       return null;
     });
+  }
+}
+
+export const cleanup: KomojuRenderFunction = (root, _paymentMethod) => {
+  // Remove occasional poll
+  const storage = root.querySelector('.offsite') as HTMLElement;
+  const interval = storage.dataset.interval;
+  if (typeof interval === 'string' && interval !== '') {
+    window.clearInterval(parseInt(interval));
+    storage.dataset.interval = '';
   }
 }
 
