@@ -128,6 +128,22 @@ describe('KOMOJU Fields: Credit Card', () => {
   it('informs the user when they try to use an unsupported brand', () => {
     cy.visit('/type/credit_card?brands=visa,jcb,master');
 
+    // Should show Visa with just a 4
+    cy.get('komoju-fields').shadow().find('#cc-number').type('4', t);
+    cy.wait(200);
+    cy.get('komoju-fields').shadow()
+      .find('#cc-icon').shadow()
+      .find('img:visible').then($img => {
+        expect($img).to.have.length(1);
+        expect($img.first().attr('src')).to.include('?brands=visa');
+      });
+    cy.get('komoju-fields').shadow().find('#cc-number').type('{backspace}', t);
+
+    // Should show all card icons
+    cy.get('komoju-fields').shadow()
+      .find('#cc-icon').shadow()
+      .find('img:visible').its('length').should('eq', 3)
+
     // Enter an American Express card number (not visa, jcb, nor master)
     cy.get('komoju-fields').shadow().find('#cc-number').type('36', t);
     cy.get('komoju-fields').shadow().contains('Unsupported card brand').should('exist');

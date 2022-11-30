@@ -67,7 +67,6 @@ function initializeInputs(
     value = convertNumbersToHalfWidth(value).replace(/\D/g, '');
     if (value.length === 0) {
       clearErrors(input);
-      return;
     }
 
     const type = cardType(value);
