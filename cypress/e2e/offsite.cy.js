@@ -18,6 +18,8 @@ describe('KOMOJU Fields: Offsites', () => {
   it('renders no fields for PayPay', () => {
     cy.visit('/type/paypay');
 
+    cy.get('komoju-fields').shadow().find('img.offsite-qr-code').should('exist');
+
     cy.wait(1000);
     cy.get('komoju-fields').shadow().find('input').should('not.exist');
 

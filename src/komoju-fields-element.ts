@@ -31,7 +31,8 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
 
   module: {
     render: KomojuRenderFunction,
-    paymentDetails: KomojuPaymentDetailsFunction
+    paymentDetails: KomojuPaymentDetailsFunction,
+    cleanup?: KomojuRenderFunction,
   } | null = null
 
   // When a <komoju-fields> element appears inside of a <form> tag,
@@ -283,16 +284,18 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   // Usually implementers would not need to call this manually.
   async render() {
     if (!this.session) throw new Error('KOMOJU Session not loaded');
+    if (!this.shadowRoot) throw new Error('KOMOJU Fields bug: element has no shadow root');
 
     const paymentMethod = this.session.payment_methods.find(method => method.type === this.paymentType);
     if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
 
     const moduleName = paymentMethod.offsite ? 'offsite' : paymentMethod.type;
-    this.module = await import(`${this.komojuCdn}/fields/${moduleName}/module.js`);
-    if (!this.module) throw new Error(`KOMOJU Payment module not found: ${this.paymentType}`);
+    const newModule = await import(`${this.komojuCdn}/fields/${moduleName}/module.js`);
+    if (!newModule) throw new Error(`KOMOJU Payment module not found: ${this.paymentType}`);
+    if (this.module?.cleanup) this.module.cleanup(this.shadowRoot, paymentMethod);
 
-    if (!this.shadowRoot) throw new Error('KOMOJU Fields element has no shadow root (internal bug)');
-    this.module.render(this.shadowRoot, paymentMethod);
+    this.module = newModule;
+    this.module!.render(this.shadowRoot, paymentMethod);
 
     // Add global styles (src = shared.css)
     const link = document.createElement('link');
