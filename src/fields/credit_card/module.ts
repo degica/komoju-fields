@@ -3,7 +3,7 @@ import KomojuFieldIconElement from './komoju-field-icon-element';
 // @ts-ignore
 import html from './template.html'
 import { convertNumbersToHalfWidth } from '../../shared/char-width-utils';
-import { addValidation } from '../../shared/validation';
+import { addValidation, showError, clearErrors } from '../../shared/validation';
 import {
   cardType,
   formatCardNumber,
@@ -65,6 +65,10 @@ function initializeInputs(
     let value = input.value;
 
     value = convertNumbersToHalfWidth(value).replace(/\D/g, '');
+    if (value.length === 0) {
+      clearErrors(input);
+      return;
+    }
 
     const type = cardType(value);
 
@@ -76,22 +80,34 @@ function initializeInputs(
     const brand = cardTypeToKomojuSubtype(type);
     if (type === 'unknown') {
       // Most brands are identifiable after 3 characters
+      // Also show default if brand is unsupported
       if (value.length < 3) {
         cardIcon.icon = supportedBrandImages;
       } else {
         cardIcon.icon = defaultCardImage;
       }
     }
-    else {
+    else if (paymentMethod.brands.includes(brand)) {
       cardIcon.icon = `https://komoju.com/payment_methods/credit_card.svg?brands=${brand}`;
+      clearErrors(input);
+    }
+    else {
+      cardIcon.icon = supportedBrandImages;
+      showError(i18n, input, 'cc.error.unsupported-brand');
     }
   });
 
-  // Card number validation: luhn check
+  // Card number validation: luhn check and brand support
   addValidation(i18n, number, (input) => {
     const value = input.value.replace(/\D/g, '');
     if (value === '') return 'cc.error.required';
     if (!luhnCheck(value)) return 'cc.error.invalid-number';
+
+    const type = cardType(value);
+    const brand = cardTypeToKomojuSubtype(type);
+    if (type === 'unknown') return 'cc.error.unsupported-brand';
+    if (!paymentMethod.brands.includes(brand)) return 'cc.error.unsupported-brand';
+
     return null;
   });
 

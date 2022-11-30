@@ -62,7 +62,7 @@ export default class KomojuFieldIconElement extends HTMLElement {
   attributeChangedCallback(name: string, oldValue: string | null, newValue: string) {
     if (name === 'icon') {
       const container = this.shadowRoot?.getElementById('komoju-field-icon');
-      if (!container) return;
+      if (!container) throw new Error('KOMOJU Fields bug: field icon container missing');
       if (oldValue === newValue) return;
 
       const iconWidth = 42;

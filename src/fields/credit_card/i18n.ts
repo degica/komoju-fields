@@ -8,6 +8,7 @@ export const en = {
   'cc.error.invalid-number': 'Invalid number',
   'cc.error.expired': 'Card is expired',
   'cc.error.invalid-month': 'Month must be between 1 and 12',
+  'cc.error.unsupported-brand': 'Unsupported card brand',
 };
 
 export const ja: typeof en = {
@@ -20,4 +21,5 @@ export const ja: typeof en = {
   'cc.error.invalid-number': 'カード番号が正しくありません',
   'cc.error.expired': 'カードの有効期限が切れています',
   'cc.error.invalid-month': '月は1から12の間で入力してください',
+  'cc.error.unsupported-brand': '対応していないクレジットカードブランドです',
 }

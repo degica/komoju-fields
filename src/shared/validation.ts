@@ -20,8 +20,7 @@ export function addValidation<Translations extends I18n>(
     const errorMessageKey = callback(input);
 
     if (errorMessageKey) {
-      input.classList.add('invalid');
-      input.parentElement?.append(createErrorElement(errorMessageKey as string));
+      showError(_i18n, input, errorMessageKey);
     }
   };
   input.addEventListener('blur', (event) => {
@@ -33,11 +32,32 @@ export function addValidation<Translations extends I18n>(
   // When the user focuses on the input, remove all error artifacts.
   input.addEventListener('focus', (event) => {
     const input = event.target as HTMLInputElement;
-    input.classList.remove('invalid');
+    clearErrors(input);
+  });
+}
 
-    input.parentElement?.querySelectorAll('komoju-error:not(.removing)').forEach((element) => {
-      element.remove();
-    });
+export function showError<Translations extends I18n>(
+  _i18n: Translations, // Used only by typescript to compile-time catch missing translations.
+  input: HTMLInputElement,
+  messageKey: keyof Translations['en']
+) {
+  input.classList.add('invalid');
+  const key = messageKey as string;
+
+  // We don't want to show the same error twice!
+  const container = input.parentElement;
+  const dupeSelector = `komoju-error:not(.removing) > komoju-i18n[key="${key}"]`;
+  if (container?.querySelector(dupeSelector)) {
+    return;
+  }
+
+  container?.append(createErrorElement(messageKey as string));
+}
+
+export function clearErrors(input: HTMLInputElement) {
+  input.classList.remove('invalid');
+  input.parentElement?.querySelectorAll('komoju-error:not(.removing)').forEach((element) => {
+    element.remove();
   });
 }
 

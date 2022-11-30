@@ -63,7 +63,7 @@ type KomojuRenderFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMetho
 type KomojuPaymentDetailsFunction = (root: ShadowRoot, paymentMethod: KomojuPaymentMethod) => object;
 
 // Translated messages are just a map of message keys to translated strings.
-type I18n = { [index: string]: any };
+type I18n = { [lang: string]: { [key: string]: string } };
 
 // Extension of the global window object with komojuTranslations for use by <komoju-i18n> elements.
 interface WindowWithKomojuGlobals extends Window {

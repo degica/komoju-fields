@@ -172,4 +172,5 @@ Here are some of the design decisions that went into this project.
 
 ### Things to watch out for
 
+* Cypress has [a lot of issues regarding Shadow DOM interaction](https://github.com/cypress-io/cypress/issues?q=is%3Aissue+is%3Aopen+label%3A%22topic%3A+shadow+dom%22+). We work around this by clicking random elements, using `{ force: true }` a lot, and emitting blur events manually.
 * If multiple payment method modules import the same code, that code will be duplicated in each bundle. This is OK for small functions, but if you're importing something big, you should consider moving it to the main bundle and explicitly passing it into the payment method module.
