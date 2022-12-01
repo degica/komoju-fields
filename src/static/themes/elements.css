@@ -1,5 +1,8 @@
-.fields {
+:host {
   --invalid-color: #df1b41;
+}
+
+.fields {
   gap: 12px;
 }
 

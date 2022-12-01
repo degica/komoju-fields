@@ -1,4 +1,4 @@
-.fields {
+:host {
   --invalid-color: red;
   --secondary-color: grey;
 }
