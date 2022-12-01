@@ -312,11 +312,45 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     const priceInfo = this.shadowRoot.querySelector('.price-info');
     if (!priceInfo) return;
 
+    // Customer fee
     if (paymentMethod.customer_fee) {
+      const listItem = document.createElement('li');
       const feeMessage = document.createElement('komoju-i18n') as KomojuI18nElement;
+      listItem.classList.add('customer-fee');
       feeMessage.key = 'customer-fee-will-be-charged';
-      feeMessage.dataset['fee'] = formatMoney(paymentMethod.customer_fee, this.session.currency);
-      priceInfo.append(feeMessage);
+      feeMessage.dataset['fee'] = formatMoney(
+        paymentMethod.customer_fee,
+        paymentMethod.currency ?? this.session.currency
+      );
+      listItem.append(feeMessage);
+      priceInfo.append(listItem);
+    }
+
+    // Dynamic currency (DCC)
+    if (
+      paymentMethod.exchange_rate &&
+      paymentMethod.amount &&
+      paymentMethod.currency &&
+      paymentMethod.currency !== this.session.currency
+    ) {
+      const listItem = document.createElement('li');
+      const dccMessage = document.createElement('komoju-i18n') as KomojuI18nElement;
+      const rate = Math.round(paymentMethod.exchange_rate * 10000) / 10000;
+      dccMessage.key = 'dynamic-currency-notice';
+      dccMessage.dataset['currency'] = paymentMethod.currency;
+      dccMessage.dataset['original'] = formatMoney(this.session.amount, this.session.currency);
+      dccMessage.dataset['converted'] = formatMoney(paymentMethod.amount, paymentMethod.currency);
+      if (paymentMethod.customer_fee) {
+        dccMessage.key = 'dynamic-currency-notice-with-fee';
+        dccMessage.dataset['total'] = formatMoney(
+          paymentMethod.amount + paymentMethod.customer_fee,
+          paymentMethod.currency
+        );
+      }
+      listItem.title = `1 ${this.session.currency} = ${rate} ${paymentMethod.currency}`;
+      listItem.classList.add('dynamic-currency');
+      listItem.append(dccMessage);
+      priceInfo.append(listItem);
     }
   }
 
