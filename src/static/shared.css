@@ -39,3 +39,7 @@ label input.invalid {
   flex-direction: column;
   width: 100%;
 }
+
+.price-info {
+  color: var(--secondary-color);
+}
