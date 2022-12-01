@@ -1,6 +1,11 @@
 import spinner from './spinner.html'
 import { runValidation } from './shared/validation'
 import KomojuI18nElement from './shared/komoju-i18n-element';
+import { formatMoney } from './money';
+
+import { registerMessages } from './shared/translations';
+import * as i18n from './i18n';
+registerMessages(i18n);
 
 // Language gets stored in here, mostly controlled by <komoju-fields>.
 declare let window: WindowWithKomojuGlobals;
@@ -302,6 +307,17 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
 
     // Add theme styles
     this.applyTheme(this.theme);
+
+    // Add price info (customer fee, dynamic currency)
+    const priceInfo = this.shadowRoot.querySelector('.price-info');
+    if (!priceInfo) return;
+
+    if (paymentMethod.customer_fee) {
+      const feeMessage = document.createElement('komoju-i18n') as KomojuI18nElement;
+      feeMessage.key = 'customer-fee-will-be-charged';
+      feeMessage.dataset['fee'] = formatMoney(paymentMethod.customer_fee, this.session.currency);
+      priceInfo.append(feeMessage);
+    }
   }
 
   applyTheme(urlToCSS: string | null) {

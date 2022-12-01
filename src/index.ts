@@ -6,9 +6,8 @@ import KomojuI18nElement from './shared/komoju-i18n-element';
 import KomojuFadeElement from './shared/komoju-fade-element';
 declare let window: WindowWithKomojuGlobals;
 
-// Set up i18n
+// Set default language based on browser
 window.komojuLanguage = navigator.language.substring(0, 2);
-window.komojuTranslations = { 'en': {}, 'ja': {} };
 
 // Public custom elements
 window.customElements.define('komoju-fields', KomojuFieldsElement);

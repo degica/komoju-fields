@@ -36,6 +36,19 @@ export default class KomojuI18nElement extends HTMLElement {
       return;
     }
 
+    // Perform interpolation
+    const matches = message.match(/%\{[\w-]+\}/g);
+    if (matches) {
+      let result = message;
+      matches.forEach((match) => {
+        const key = match.replace(/%{|}/g, '');
+        const value = this.dataset[key];
+        if (value) result = result.replace(match, value);
+      });
+      this.textContent = result;
+      return;
+    }
+
     this.textContent = message;
   }
 }

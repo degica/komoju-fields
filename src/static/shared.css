@@ -1,5 +1,10 @@
 .fields {
   --invalid-color: red;
+  --secondary-color: grey;
+}
+
+komoju-i18n {
+  display: inline;
 }
 
 komoju-error {
