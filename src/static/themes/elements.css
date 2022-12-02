@@ -35,7 +35,9 @@
 
   cursor: pointer;
 
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  transition: background-color 0.2s ease-in-out,
+              border-color 0.2s ease-in-out,
+              color 0.2s ease-in-out;
 }
 
 #picker .radio {
@@ -57,6 +59,7 @@
 
 .radio.checked {
   border-color: #0570de;
+  color: #0570de;
 }
 
 .field input {
