@@ -13,6 +13,7 @@ komoju-error {
 
 komoju-fade {
   position: absolute;
+  z-index: 100;
 
   background: white;
 
