@@ -41,7 +41,7 @@ async function showTestPage(req, res, options) {
     headers: komojuHeaders(),
     body: JSON.stringify({
       amount: 6000,
-      currency: 'JPY',
+      currency: 'USD',
       default_locale: 'en',
       payment_data: {
         external_order_num: `order-${Math.floor(Math.random() * 1000000000)}`,
@@ -142,14 +142,19 @@ app.get('/double', async (req, res) => {
   showTestPage(req, res, { template: 'double' })
 })
 
-app.get('/easy', async (_req, res) => {
+app.get('/easy', async (req, res) => {
+  const { currency, exchangerate } = req.query;
+
   res.set('content-type', 'text/html')
   res.render('index', {
     session: { id: '' },
-    sessionString: generateTestSession(),
+    sessionString: JSON.stringify(generateTestSession({
+      currency, exchangerate
+    })),
     publishableKey: KOMOJU_PUBLISHABLE_KEY,
     cdn: testappUrl(req, '/'),
     api: KOMOJU_API_URL,
+    payment_type: null,
   })
 })
 

@@ -1,5 +1,6 @@
 :host {
   --invalid-color: #df1b41;
+  --secondary-color: #6d6e78;
 }
 
 .fields {

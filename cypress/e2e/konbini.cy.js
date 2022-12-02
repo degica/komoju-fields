@@ -37,4 +37,18 @@ describe('KOMOJU Fields: Konbini', () => {
     cy.contains('Thanks for your payment!').should('exist');
     cy.contains('Payment status: authorized').should('exist');
   });
+
+  it('shows customer fee and DCC info', () => {
+    cy.visit('/easy?currency=USD&exchangerate=135.65');
+
+    cy.get('#payment-type-select').select('Konbini');
+
+    cy.get('komoju-fields').shadow().contains('A fee of ¥190 will be included.').should('exist');
+    cy.get('komoju-fields').shadow().contains('Payment will be made in JPY: $60.00 → ¥8,139. (total: ¥8,329)').should('exist');
+
+    cy.get('#payment-type-select').select('Credit Card');
+
+    cy.get('komoju-fields').shadow().contains('A fee of ¥190 will be included.').should('not.exist');
+    cy.get('komoju-fields').shadow().contains('Payment will be made in JPY: $60.00 → ¥8,139. (total: ¥8,329)').should('not.exist');
+  });
 });

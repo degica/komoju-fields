@@ -1,14 +1,16 @@
 // Generate a full session object, quite similar to the ones you'd get
 // from the KOMOJU API.
 export default function({
-  brands
+  brands,
+  currency,
+  exchangerate,
 }) {
   return {
     "id": "3ahqc3wqd7byq5z39ljlo1wq1",
     "resource": "session",
     "mode": "payment",
     "amount": 6000,
-    "currency": "JPY",
+    "currency": currency ?? 'JPY',
     "session_url": "http://localhost:50130/sessions/3ahqc3wqd7byq5z39ljlo1wq1",
     "return_url": "http://localhost:3000/paymentcomplete",
     "default_locale": "en",
@@ -20,7 +22,7 @@ export default function({
           "master"
         ],
         "amount": 6000,
-        "currency": "JPY",
+        "currency": currency ?? 'JPY',
         "exchange_rate": 1
       },
       {
@@ -46,17 +48,17 @@ export default function({
             "icon": "/assets/konbini/seicomart-0dd22c56a5bee2440a4dda655bc350339cafd2ef704e2163d25df1711d29e021.svg"
           }
         },
-        "amount": 6000,
+        "amount": exchangerate ? 6000 * exchangerate / 100 : 6000,
         "currency": "JPY",
-        "exchange_rate": 1
+        "exchange_rate": exchangerate ?? 1
       },
       {
         "type": "paypay",
         "offsite": true,
         "additional_fields": [],
-        "amount": 6000,
+        "amount": exchangerate ? 6000 * exchangerate / 100 : 6000,
         "currency": "JPY",
-        "exchange_rate": 1
+        "exchange_rate": exchangerate ?? 1
       },
       {
         "type": "bank_transfer",
