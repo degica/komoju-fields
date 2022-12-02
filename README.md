@@ -120,6 +120,20 @@ fields.submit();
 // You can listen for 'komoju-invalid' to handle validation errors.
 ```
 
+### Turning off error reporting
+
+In order to improve the product, KOMOJU Fields sends error reports to Honeybadger by default.
+
+If you want to turn this off, you can add the following to your HTML:
+
+```html
+<script>
+  window.komojuErrorReporting = false;
+</script>
+```
+
+This will prevent KOMOJU Fields from pulling any Honeybadger or error-related code, also resulting in a decreased bundle size. Just know that if you do this, it may be harder for us to help you troubleshoot errors (of course, we try not to throw errors in the first place!).
+
 ## Hacking
 
 ```bash

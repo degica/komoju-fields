@@ -73,6 +73,8 @@ interface WindowWithKomojuGlobals extends Window {
   komojuFieldsDebug: boolean,
   komojuTranslations: I18n,
   komojuLanguage: string,
+  komojuReportError: ErrorReportFunction,
+  komojuErrorReporting?: boolean,
 }
 
 // Individual payment methods will access certain attributes of the main <komoju-fields> element.
