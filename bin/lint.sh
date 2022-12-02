@@ -7,7 +7,7 @@ set -e
 # For actual builds, we use esbuild because it's way faster. See build.sh.
 
 TSC=${TSC:-"npx tsc"}
-TSC_ARGS="--strict --noEmit --target es2020 --lib es2020,dom --module esnext"
+TSC_ARGS="--strict --noEmit --target es2020 --lib es2020,dom --module esnext --moduleResolution node"
 
 # Generate dynamic source files
 bin/generate.sh
@@ -18,6 +18,12 @@ echo BUNDLE: src/index.ts OK
 
 # Lint the individual fields
 for module in $(ls src/fields/*/module.ts); do
+  $TSC $TSC_ARGS "$module"
+  echo BUNDLE: "$module" OK
+done
+
+# Lint extras
+for module in $(ls src/extras/*/module.ts); do
   $TSC $TSC_ARGS "$module"
   echo BUNDLE: "$module" OK
 done

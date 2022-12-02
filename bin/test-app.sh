@@ -1,3 +1,3 @@
 #!/bin/sh
 
-(cd test-app && npm i && npm run start)
+(cd test-app && npm run start)

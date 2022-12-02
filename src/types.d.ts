@@ -65,6 +65,9 @@ type KomojuPaymentDetailsFunction = (root: ShadowRoot, paymentMethod: KomojuPaym
 // Translated messages are just a map of message keys to translated strings.
 type I18n = { [lang: string]: { [key: string]: string } };
 
+// Error report function.
+type ErrorReportFunction = (error: Error, context?: object) => void;
+
 // Extension of the global window object with komojuTranslations for use by <komoju-i18n> elements.
 interface WindowWithKomojuGlobals extends Window {
   komojuFieldsDebug: boolean,

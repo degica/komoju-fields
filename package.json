@@ -25,5 +25,8 @@
     "cypress": "^11.0.1",
     "esbuild": "^0.15.13",
     "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "@honeybadger-io/js": "^4.7.4"
   }
 }
