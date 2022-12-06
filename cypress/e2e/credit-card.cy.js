@@ -125,12 +125,12 @@ describe('KOMOJU Fields: Credit Card', () => {
     cy.contains('Payment status: captured').should('exist');
   });
 
-  it('informs the user when they try to use an unsupported brand', () => {
+  it('has dynamic brand icons, instant brand validation', () => {
     cy.visit('/type/credit_card?brands=visa,jcb,master');
 
     // Should show Visa with just a 4
     cy.get('komoju-fields').shadow().find('#cc-number').type('4', t);
-    cy.wait(200);
+    cy.wait(400);
     cy.get('komoju-fields').shadow()
       .find('#cc-icon').shadow()
       .find('img:visible').then($img => {
