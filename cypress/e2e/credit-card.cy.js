@@ -130,7 +130,7 @@ describe('KOMOJU Fields: Credit Card', () => {
 
     // Should show Visa with just a 4
     cy.get('komoju-fields').shadow().find('#cc-number').type('4', t);
-    cy.wait(400);
+    cy.wait(1000); // Bad but CI can't handle this part
     cy.get('komoju-fields').shadow()
       .find('#cc-icon').shadow()
       .find('img:visible').then($img => {
