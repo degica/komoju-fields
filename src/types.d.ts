@@ -70,7 +70,6 @@ type ErrorReportFunction = (error: Error, context?: object) => void;
 
 // Extension of the global window object with komojuTranslations for use by <komoju-i18n> elements.
 interface WindowWithKomojuGlobals extends Window {
-  komojuFieldsDebug: boolean,
   komojuTranslations: I18n,
   komojuLanguage: string,
   komojuReportError: ErrorReportFunction,
