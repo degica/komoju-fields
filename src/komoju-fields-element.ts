@@ -2,6 +2,7 @@ import spinner from './spinner.html'
 import { runValidation } from './shared/validation'
 import KomojuI18nElement from './shared/komoju-i18n-element';
 import { formatMoney } from './money';
+import ENV from './generated/env';
 
 import { registerMessages } from './shared/translations';
 import * as i18n from './i18n';
@@ -58,17 +59,6 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     this.setAttribute('komoju-api', value ?? '');
   }
 
-  // Attribute: komoju-cdn
-  // Where to fetch payment method modules.
-  get komojuCdn() {
-    const value = this.getAttribute('komoju-cdn');
-    if (!value || value === '') return 'https://multipay.komoju.com';
-    else return value;
-  }
-  set komojuCdn(value) {
-    this.setAttribute('komoju-cdn', value ?? '');
-  }
-
   // Attribute: session-id
   // KOMOJU Session ID. Create your session on the server then pass it in here.
   get sessionId() {
@@ -113,6 +103,11 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   }
   set theme(value) {
     this.setAttribute('theme', value ?? '');
+  }
+
+  // Where to fetch payment method modules.
+  get komojuCdn() {
+    return ENV['CDN'];
   }
 
   get paymentMethod() {
@@ -292,10 +287,12 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     const paymentMethod = this.session.payment_methods.find(method => method.type === this.paymentType);
     if (!paymentMethod) throw new Error(`KOMOJU Payment method not found: ${this.paymentType}`);
 
+    // Grab the module for the payment method (name of a folder in src/fields)
     const moduleName = paymentMethod.offsite ? 'offsite' : paymentMethod.type;
     this.module = await import(`${this.komojuCdn}/fields/${moduleName}/module.js`);
     if (!this.module) throw new Error(`KOMOJU Payment module not found: ${this.paymentType}`);
 
+    // Call the module's render function. It will add elements directly to this element's shadow DOM.
     if (!this.shadowRoot) throw new Error('KOMOJU Fields element has no shadow root (internal bug)');
     this.module.render(this.shadowRoot, paymentMethod);
 

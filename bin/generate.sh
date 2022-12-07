@@ -33,6 +33,8 @@ echo '//'                                                                       
 echo '// This file pulls from environment variables (and git).'                   >> $file
 echo >> $file
 echo 'export default {'                                                           >> $file
+# CDN URL
+echo '  "CDN": "'${CDN:-"http://localhost:3000"}'",'                              >> $file
 # ENV: "production" or "development"
 echo '  "ENV": "'${ENV:-"development"}'",'                                        >> $file
 # Honeybadger API key
