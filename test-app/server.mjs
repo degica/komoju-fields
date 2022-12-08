@@ -100,6 +100,35 @@ app.get('/picker', async (req, res) => {
 
 /*
  ****************************************************************
+ * GET /token
+ * POST /token
+ *
+ * Similar to the main example except it uses "token" mode.
+ * The POST handler is for form submit.
+ ****************************************************************
+ */
+app.get('/token', async (req, res) => {
+  showTestPage(req, res, { template: 'token' })
+})
+app.post('/token', async (req, res) => {
+  const { session_id, komoju_token } = req.body;
+
+  const komojuPayResponse = await fetch(`${KOMOJU_API_URL}/api/v1/sessions/${session_id}/pay`, {
+    method: 'POST',
+    headers: komojuHeaders(),
+    body: JSON.stringify({
+      payment_details: komoju_token
+    }),
+  })
+  const pay = await komojuPayResponse.json()
+  if (pay.error) {
+    throw new Error(JSON.stringify(pay.error))
+  }
+  res.redirect(pay.redirect_url)
+});
+
+/*
+ ****************************************************************
  * GET /type/:payment_type
  *
  * This is the same as the main example except it pre-selects a payment type.

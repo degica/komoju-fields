@@ -39,6 +39,22 @@ interface KomojuSession {
   status: 'pending' | 'completed'  | 'cancelled',
 }
 
+interface KomojuToken {
+  id: string,
+  resource: 'token',
+  created_at: string,
+  payment_details: {
+    type: string
+  }
+}
+
+interface KomojuApiError {
+  code: string,
+  message: string,
+  param: string | null,
+  details: string | null,
+}
+
 // This is the response to /api/v1/payment_methods
 interface KomojuPaymentMethodMeta {
   name_en: string,
@@ -52,7 +68,7 @@ interface KomojuPaymentMethodMeta {
 // This is the response to /api/v1/sessions/:id/pay
 interface KomojuPayResult {
   status: 'pending' | 'completed' | 'error',
-  error?: string | { code: string, details: object, message: string, param: string | null },
+  error?: string | KomojuApiError,
   redirect_url?: string,
 }
 

@@ -105,6 +105,27 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     this.setAttribute('theme', value ?? '');
   }
 
+  // Attribute: token
+  // Boolean attribute - if present, will generate a token instead of processing payment.
+  get token() {
+    return this.hasAttribute('token');
+  }
+  set token(value) {
+    if (value) this.setAttribute('token', '');
+    else this.removeAttribute('token');
+  }
+
+  // Attribute: name
+  // Similar to an input's name attribute. This is used in token mode, and is the name of the
+  // input that will contain the token.
+  get name() {
+    return this.getAttribute('name');
+  }
+  set name(value) {
+    if (value) this.setAttribute('name', value);
+    else this.removeAttribute('name');
+  }
+
   // Where to fetch payment method modules.
   get komojuCdn() {
     return ENV['CDN'];
@@ -204,7 +225,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     const form = parent as HTMLFormElement;
     const handler = (event: Event) => {
       event.preventDefault();
-      this.submit();
+      this.submit(event);
     };
     form.addEventListener('submit', handler);
     this.formSubmitHandler = { form, handler };
@@ -214,6 +235,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   disconnectedCallback() {
     if (!this.formSubmitHandler) return;
     this.formSubmitHandler.form.removeEventListener('submit', this.formSubmitHandler.handler);
+    this.formSubmitHandler = undefined;
   }
 
   // Submits payment details securely to KOMOJU before redirecting.
@@ -221,7 +243,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   // 1. A URL for performing 3DS authentication
   // 2. An external payment provider URL (i.e. to log into a payment app or show a QR code)
   // 3. The session's return_url in the case where payment is completed instantly
-  async submit() {
+  async submit(event?: Event): Promise<KomojuToken | void> {
     if (!this.module || !this.shadowRoot || !this.session) {
       throw new Error('Attempted to submit before selecting KOMOJU Payment method');
     }
@@ -247,6 +269,20 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     // and send it to KOMOJU.
     this.startFade();
     const paymentDetails = this.module.paymentDetails(this.shadowRoot, paymentMethod);
+
+    if (this.token) {
+      return await this.submitToken(paymentDetails, event);
+    }
+    else {
+      return await this.submitPayment(paymentDetails);
+    }
+  }
+
+  async submitPayment(paymentDetails: object) {
+    if (!this.shadowRoot || !this.session) {
+      throw new Error('Attempted to submit before selecting KOMOJU Payment method');
+    }
+
     const payResponse = await this.komojuFetch('POST', `/api/v1/sessions/${this.session.id}/pay`, {
       payment_details: paymentDetails
     });
@@ -254,29 +290,72 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
 
     if (payResult.error) {
       console.error(payResult);
-
-      // Emit an event so implementers can handle this.
-      const showError = this.dispatchEvent(new CustomEvent('komoju-error', {
-        detail: { error: payResult.error }, bubbles: true, composed: true,
-      }));
-
-      // Show errors if implementers don't cancel the event.
-      if (showError) {
-        this.shadowRoot.querySelectorAll('.generic-error-message').forEach(container => {
-          const error = document.createElement('komoju-error');
-          if (typeof payResult.error === 'string') {
-            error.textContent = payResult.error as string;
-          } else if (payResult.error?.message) {
-            error.textContent = payResult.error.message as string;
-          }
-          container.append(error);
-        });
-      }
+      this.handleApiError(payResult.error);
       this.endFade();
       return;
     }
 
     window.location.href = payResult.redirect_url!;
+  }
+
+  handleApiError(error: string | KomojuApiError) {
+    if (!this.shadowRoot) {
+      throw new Error('KOMOJU Fields bug: no shadow root on error');
+    }
+
+    // Emit an event so implementers can handle this.
+    const showError = this.dispatchEvent(new CustomEvent('komoju-error', {
+      detail: { error }, bubbles: true, composed: true, cancelable: true,
+    }));
+
+    // Show errors if implementers don't cancel the event.
+    if (!showError) return;
+
+    this.shadowRoot.querySelectorAll('.generic-error-message').forEach(container => {
+      const errorText = document.createElement('komoju-error');
+      if (typeof error === 'string') {
+        errorText.textContent = error;
+      } else if (error.message) {
+        errorText.textContent = error.message;
+      }
+      container.append(errorText);
+    });
+  }
+
+  async submitToken(paymentDetails: object, event?: Event) {
+    if (!this.shadowRoot) {
+      throw new Error('KOMOJU Fields bug: no shadow root on submit');
+    }
+
+    const tokenResponse = await this.komojuFetch('POST', `/api/v1/tokens`, {
+      payment_details: paymentDetails
+    });
+    if (tokenResponse.status >= 400) {
+      const error = (await tokenResponse.json()).error as KomojuApiError;
+      this.handleApiError(error);
+      this.endFade();
+      return;
+    }
+    const token = await tokenResponse.json() as KomojuToken;
+
+    // If this is part of a form submit, we want to add the token to the form and resubmit.
+    if (event && this.formSubmitHandler) {
+      const form = this.formSubmitHandler.form;
+
+      // Now we add an input to the form with the token and submit it.
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = this.name ?? 'komoju_token';
+      input.value = token.id;
+      form.append(input);
+
+      // Re-submit the form.
+      form.removeEventListener('submit', this.formSubmitHandler.handler);
+      this.formSubmitHandler = undefined;
+      form.submit();
+    }
+
+    return token;
   }
 
   // Renders fields for the selected payment method.

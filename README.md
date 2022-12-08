@@ -92,6 +92,26 @@ This is only useful if you're creating sessions that support multiple payment ty
 </script>
 ```
 
+#### `token` and `name`
+
+```html
+<!-- 'token' is a boolean attribute that activates token mode -->
+<komoju-fields
+  token name="komoju_token"
+  session="{...}"
+  publishable-key="YOUR_PUBLISHABLE_KEY"
+></komoju-fields>
+
+<!-- You can either submit the form normally, or obtain the token via JS: -->
+<script>
+  (async () => {
+    const fields = document.querySelector('komoju-fields');
+    const token = await fields.submit();
+    console.log(token);
+  })()
+</script>
+```
+
 ### Submitting the form
 
 KOMOJU Fields does not handle form submission. Implementers have 2 options:
@@ -119,6 +139,27 @@ fields.submit();
 // processing errors.
 // You can listen for 'komoju-invalid' to handle validation errors.
 ```
+
+#### Special case: token mode
+
+If you use the `token` attribute, the `<form>` tag auto-submit will behave a little differently.
+
+Instead of auto-redirecting, the `<form>` tag will be submitted normally, with an `<input type="hidden">` tag containing the token.
+
+```html
+<form method="post" action="/my/payment/endpoint">
+  <komoju-fields
+    token
+    name="my_komoju_token"
+    session-id="SESSION_ID_FROM_KOMOJU_API"
+    publishable-key="YOUR_PUBLISHABLE_KEY"
+  ></komoju-fields>
+
+  <button type="submit">Pay</button>
+</form>
+```
+
+In this example, clicking on the submit button will submit the form like normal. On your server, the token will be available the POST body alongside all other `<input>` values (e.g. `my_komoju_token=tok_abc123`).
 
 ### Turning off error reporting
 
