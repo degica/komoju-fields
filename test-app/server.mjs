@@ -31,6 +31,10 @@ const KOMOJU_PUBLISHABLE_KEY = process.env['PUBLISHABLE_KEY']
                                  : 'pk_degica-mart-test');
 
 
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  next()
+})
 app.use('/', express.static('../dist'))
 
 async function showTestPage(req, res, options) {

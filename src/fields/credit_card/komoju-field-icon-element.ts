@@ -52,6 +52,7 @@ export default class KomojuFieldIconElement extends HTMLElement {
     });
     this.resizeObserver!.observe(parent);
     this.reposition();
+    setTimeout(() => this.reposition(), 100);
   }
 
   disconnectedCallback() {

@@ -225,6 +225,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     const form = parent as HTMLFormElement;
     const handler = (event: Event) => {
       event.preventDefault();
+      event.stopImmediatePropagation();
       this.submit(event);
     };
     form.addEventListener('submit', handler);
