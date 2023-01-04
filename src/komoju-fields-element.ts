@@ -45,6 +45,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   // This keeps track of that handler and lets us remove it when disconnected.
   formSubmitHandler?: {
     form: HTMLFormElement,
+    target: HTMLElement, // target is different from form so we can ensure our event gets called first
     handler: (event: Event) => void
   }
 
@@ -143,7 +144,7 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   }
 
   // Reactive attribute handling. When session or payment type is changed, we want to re-render.
-  async attributeChangedCallback(name: string, _oldValue: string, newValue: string) {
+  async attributeChangedCallback(name: string, _oldValue: string | null, newValue: string | null) {
     if (name === 'session') {
       if (!newValue || newValue == '') return;
 
@@ -220,22 +221,32 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     // It's OK if we can't find a parent form tag.
     // Implementers can call submit() manually on this element.
     if (!parent) return;
-
-    // Call this.submit on form submit.
     const form = parent as HTMLFormElement;
+
+    // We set the event target to the form's parent to ensure that our handler is called first.
+    // This works because of capturing. Capturing events are called on parents *before* target.
+    const target = form.parentElement;
+    if (!target) return;
+
     const handler = (event: Event) => {
+      // Make sure this komoju-fields element is visible.
+      if (this.offsetParent === null) return;
+      // Make sure this event is for the right form element.
+      if (event.target !== form) return;
+
       event.preventDefault();
       event.stopImmediatePropagation();
+
       this.submit(event);
     };
-    form.addEventListener('submit', handler);
-    this.formSubmitHandler = { form, handler };
+    target.addEventListener('submit', handler, true);
+    this.formSubmitHandler = { form, target, handler };
   }
 
   // When disconnected, we want to remove the submit handler from the form (if added).
   disconnectedCallback() {
     if (!this.formSubmitHandler) return;
-    this.formSubmitHandler.form.removeEventListener('submit', this.formSubmitHandler.handler);
+    this.formSubmitHandler.target.removeEventListener('submit', this.formSubmitHandler.handler, true);
     this.formSubmitHandler = undefined;
   }
 
@@ -279,6 +290,8 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     }
   }
 
+  // Called by submit,
+  // submits payment directly to KOMOJU for processing.
   async submitPayment(paymentDetails: object) {
     if (!this.shadowRoot || !this.session) {
       throw new Error('Attempted to submit before selecting KOMOJU Payment method');
@@ -323,6 +336,8 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
     });
   }
 
+  // Called by submit,
+  // uses payment info to create a token that can be safely transmitted to the backend and used there.
   async submitToken(paymentDetails: object, event?: Event) {
     if (!this.shadowRoot) {
       throw new Error('KOMOJU Fields bug: no shadow root on submit');
@@ -351,9 +366,18 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
       form.append(input);
 
       // Re-submit the form.
-      form.removeEventListener('submit', this.formSubmitHandler.handler);
+      console.log('re-submitting!');
+      console.log(this);
+      console.log(input);
+      this.formSubmitHandler.target.removeEventListener('submit', this.formSubmitHandler.handler, true);
       this.formSubmitHandler = undefined;
-      form.submit();
+
+      const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
+      if (form.dispatchEvent(submitEvent)) {
+        form.submit();
+      } else {
+        this.endFade();
+      }
     }
 
     return token;
