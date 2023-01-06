@@ -456,7 +456,9 @@ export default class KomojuFieldsElement extends HTMLElement implements KomojuFi
   }
 
   applyTheme(urlToCSS: string | null) {
-    if (!urlToCSS || urlToCSS == '') return;
+    if (!urlToCSS || urlToCSS == '') {
+      urlToCSS = `${this.komojuCdn}/static/themes/elements.css`;
+    }
     const link = document.createElement('link');
     link.id = 'theme';
     link.rel = 'stylesheet';
