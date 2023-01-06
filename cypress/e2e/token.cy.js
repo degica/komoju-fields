@@ -22,4 +22,18 @@ describe('KOMOJU Fields: Token mode', () => {
     cy.contains('Thanks for your payment!').should('exist');
     cy.contains('Payment status: authorized').should('exist');
   });
+
+  it('lets me pay for a credit card payment via token', () => {
+    cy.visit('/token');
+    cy.get('komoju-picker').shadow().contains('Credit Card').click();
+
+    cy.get('komoju-fields').shadow().find('#cc-name').type('John Doe', t);
+    cy.get('komoju-fields').shadow().find('#cc-number').type('4242424242424242', t);
+    cy.get('komoju-fields').shadow().find('#cc-exp').type('1299', t);
+    cy.get('komoju-fields').shadow().find('#cc-cvc').type('111', t);
+    cy.contains('Pay').click();
+
+    cy.contains('Thanks for your payment').should('exist');
+    cy.contains('Payment status: captured').should('exist');
+  });
 });

@@ -214,7 +214,7 @@ export const paymentDetails: KomojuPaymentDetailsFunction = (root, _paymentMetho
   return {
     type: 'credit_card',
     name: name.value,
-    number: number.value,
+    number: number.value.replace(/\s+/g, ''),
     month, year,
     verification_value: cvc.value,
   }
